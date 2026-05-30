@@ -2,70 +2,111 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../helpers/app_colors.dart';
+import '../app_numbers.dart';
 
 class AppTheme {
   ThemeData getThemeData(BuildContext context) {
     const colorScheme = AppColorScheme();
+    final interText = GoogleFonts.inter().fontFamily;
+
     return ThemeData(
       useMaterial3: false,
       colorScheme: colorScheme,
       primaryColor: colorScheme.primary,
-      scaffoldBackgroundColor: const Color(0xFFf8fafc),
-      fontFamily: GoogleFonts.inter().fontFamily,
+      scaffoldBackgroundColor: AppColors.surfaceLow,
+      fontFamily: interText,
+
+      // AppBar
       appBarTheme: AppBarTheme(
-        backgroundColor: colorScheme.primary,
-        foregroundColor: colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         elevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         titleTextStyle: GoogleFonts.inter(
-          color: colorScheme.onPrimary,
-          fontSize: 18,
+          color: AppColors.onPrimary,
+          fontSize: 17,
           fontWeight: FontWeight.w600,
         ),
       ),
+
+      // Botones elevados
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primary,
-          foregroundColor: colorScheme.onPrimary,
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.onPrimary,
+          elevation: 2,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(kRadiusMd),
           ),
-          minimumSize: const Size(double.infinity, 52),
+          minimumSize: const Size(double.infinity, kBtnHeight),
           textStyle: GoogleFonts.inter(
-            fontSize: 16,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
+
+      // Botones de texto
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          textStyle: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+
+      // Inputs
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: AppColors.surface,
+        contentPadding: kSpaceDeviceHVSm,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFe2e8f0)),
+          borderRadius: BorderRadius.circular(kRadiusMd),
+          borderSide: const BorderSide(color: AppColors.outline),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFe2e8f0)),
+          borderRadius: BorderRadius.circular(kRadiusMd),
+          borderSide: const BorderSide(color: AppColors.outline),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF0ea5c8), width: 2),
+          borderRadius: BorderRadius.circular(kRadiusMd),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFef4444)),
+          borderRadius: BorderRadius.circular(kRadiusMd),
+          borderSide: const BorderSide(color: AppColors.error),
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        labelStyle: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 14),
+        hintStyle: const TextStyle(color: AppColors.gray, fontSize: 14),
       ),
+
+      // Cards
       cardTheme: CardThemeData(
         elevation: 0,
+        color: AppColors.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: Color(0xFFe2e8f0)),
+          borderRadius: BorderRadius.circular(kRadiusMd),
+          side: const BorderSide(color: AppColors.outline),
         ),
-        color: Colors.white,
+      ),
+
+      // Divider
+      dividerTheme: const DividerThemeData(
+        color: AppColors.outline,
+        thickness: 1,
+        space: 1,
+      ),
+
+      // Chips
+      chipTheme: ChipThemeData(
+        backgroundColor: AppColors.surfaceContainer,
+        selectedColor: AppColors.primaryLight,
+        labelStyle: const TextStyle(fontSize: 13),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(kRadiusSm),
+        ),
       ),
     );
   }

@@ -31,12 +31,8 @@ mixin _$DashboardModel {
   @JsonKey(name: 'recent_sales')
   List<RecentSale> get recentSales => throw _privateConstructorUsedError;
 
-  /// Serializes this DashboardModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of DashboardModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $DashboardModelCopyWith<DashboardModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -69,8 +65,6 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of DashboardModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -104,8 +98,6 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
     ) as $Val);
   }
 
-  /// Create a copy of DashboardModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DashboardPeriodCopyWith<$Res> get today {
@@ -114,8 +106,6 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
     });
   }
 
-  /// Create a copy of DashboardModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DashboardPeriodCopyWith<$Res> get week {
@@ -124,8 +114,6 @@ class _$DashboardModelCopyWithImpl<$Res, $Val extends DashboardModel>
     });
   }
 
-  /// Create a copy of DashboardModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DashboardMonthCopyWith<$Res> get month {
@@ -166,8 +154,6 @@ class __$$DashboardModelImplCopyWithImpl<$Res>
       _$DashboardModelImpl _value, $Res Function(_$DashboardModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of DashboardModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -265,7 +251,7 @@ class _$DashboardModelImpl implements _DashboardModel {
                 .equals(other._recentSales, _recentSales));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -275,9 +261,7 @@ class _$DashboardModelImpl implements _DashboardModel {
       const DeepCollectionEquality().hash(_topProducts),
       const DeepCollectionEquality().hash(_recentSales));
 
-  /// Create a copy of DashboardModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$DashboardModelImplCopyWith<_$DashboardModelImpl> get copyWith =>
@@ -319,11 +303,8 @@ abstract class _DashboardModel implements DashboardModel {
   @override
   @JsonKey(name: 'recent_sales')
   List<RecentSale> get recentSales;
-
-  /// Create a copy of DashboardModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$DashboardModelImplCopyWith<_$DashboardModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -337,12 +318,8 @@ mixin _$DashboardPeriod {
   double get total => throw _privateConstructorUsedError;
   int get count => throw _privateConstructorUsedError;
 
-  /// Serializes this DashboardPeriod to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of DashboardPeriod
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $DashboardPeriodCopyWith<DashboardPeriod> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -366,8 +343,6 @@ class _$DashboardPeriodCopyWithImpl<$Res, $Val extends DashboardPeriod>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of DashboardPeriod
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -406,8 +381,6 @@ class __$$DashboardPeriodImplCopyWithImpl<$Res>
       _$DashboardPeriodImpl _value, $Res Function(_$DashboardPeriodImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of DashboardPeriod
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -456,13 +429,11 @@ class _$DashboardPeriodImpl implements _DashboardPeriod {
             (identical(other.count, count) || other.count == count));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, total, count);
 
-  /// Create a copy of DashboardPeriod
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$DashboardPeriodImplCopyWith<_$DashboardPeriodImpl> get copyWith =>
@@ -488,11 +459,8 @@ abstract class _DashboardPeriod implements DashboardPeriod {
   double get total;
   @override
   int get count;
-
-  /// Create a copy of DashboardPeriod
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$DashboardPeriodImplCopyWith<_$DashboardPeriodImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -508,12 +476,8 @@ mixin _$DashboardMonth {
   @JsonKey(name: 'average_ticket')
   double get averageTicket => throw _privateConstructorUsedError;
 
-  /// Serializes this DashboardMonth to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of DashboardMonth
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $DashboardMonthCopyWith<DashboardMonth> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -540,8 +504,6 @@ class _$DashboardMonthCopyWithImpl<$Res, $Val extends DashboardMonth>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of DashboardMonth
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -588,8 +550,6 @@ class __$$DashboardMonthImplCopyWithImpl<$Res>
       _$DashboardMonthImpl _value, $Res Function(_$DashboardMonthImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of DashboardMonth
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -651,13 +611,11 @@ class _$DashboardMonthImpl implements _DashboardMonth {
                 other.averageTicket == averageTicket));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, total, count, averageTicket);
 
-  /// Create a copy of DashboardMonth
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$DashboardMonthImplCopyWith<_$DashboardMonthImpl> get copyWith =>
@@ -689,11 +647,8 @@ abstract class _DashboardMonth implements DashboardMonth {
   @override
   @JsonKey(name: 'average_ticket')
   double get averageTicket;
-
-  /// Create a copy of DashboardMonth
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$DashboardMonthImplCopyWith<_$DashboardMonthImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -709,12 +664,8 @@ mixin _$TopProduct {
   int get units => throw _privateConstructorUsedError;
   double get revenue => throw _privateConstructorUsedError;
 
-  /// Serializes this TopProduct to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of TopProduct
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $TopProductCopyWith<TopProduct> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -738,8 +689,6 @@ class _$TopProductCopyWithImpl<$Res, $Val extends TopProduct>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of TopProduct
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -788,8 +737,6 @@ class __$$TopProductImplCopyWithImpl<$Res>
       _$TopProductImpl _value, $Res Function(_$TopProductImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of TopProduct
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -857,13 +804,11 @@ class _$TopProductImpl implements _TopProduct {
             (identical(other.revenue, revenue) || other.revenue == revenue));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, name, type, units, revenue);
 
-  /// Create a copy of TopProduct
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$TopProductImplCopyWith<_$TopProductImpl> get copyWith =>
@@ -895,11 +840,8 @@ abstract class _TopProduct implements TopProduct {
   int get units;
   @override
   double get revenue;
-
-  /// Create a copy of TopProduct
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$TopProductImplCopyWith<_$TopProductImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -919,12 +861,8 @@ mixin _$RecentSale {
   @JsonKey(name: 'payment_method')
   String get paymentMethod => throw _privateConstructorUsedError;
 
-  /// Serializes this RecentSale to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of RecentSale
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $RecentSaleCopyWith<RecentSale> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -954,8 +892,6 @@ class _$RecentSaleCopyWithImpl<$Res, $Val extends RecentSale>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of RecentSale
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1020,8 +956,6 @@ class __$$RecentSaleImplCopyWithImpl<$Res>
       _$RecentSaleImpl _value, $Res Function(_$RecentSaleImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of RecentSale
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1114,14 +1048,12 @@ class _$RecentSaleImpl implements _RecentSale {
                 other.paymentMethod == paymentMethod));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, saleDate, branch, client, total, paymentMethod);
 
-  /// Create a copy of RecentSale
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$RecentSaleImplCopyWith<_$RecentSaleImpl> get copyWith =>
@@ -1162,11 +1094,8 @@ abstract class _RecentSale implements RecentSale {
   @override
   @JsonKey(name: 'payment_method')
   String get paymentMethod;
-
-  /// Create a copy of RecentSale
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$RecentSaleImplCopyWith<_$RecentSaleImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -15,6 +15,8 @@ class UserModel with _$UserModel {
     @JsonKey(name: 'full_name') @Default('') String fullName,
     // API returns groups as List<String> (flat names)
     @Default([]) List<String> groups,
+    // employee_profile nested object — nullable
+    @JsonKey(name: 'employee_profile') @Default(null) EmployeeProfileModel? employeeProfile,
   }) = _UserModel;
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -24,4 +26,18 @@ class UserModel with _$UserModel {
 extension UserModelX on UserModel {
   String get displayName => fullName.isNotEmpty ? fullName : username;
   String get groupName => groups.isNotEmpty ? groups.first : '';
+  String get branchName => employeeProfile?.branchName ?? '';
+}
+
+@freezed
+class EmployeeProfileModel with _$EmployeeProfileModel {
+  const factory EmployeeProfileModel({
+    required int id,
+    @JsonKey(name: 'branch_name') @Default('') String branchName,
+    @Default('') String phone,
+    @JsonKey(name: 'identification_number') @Default('') String identificationNumber,
+  }) = _EmployeeProfileModel;
+
+  factory EmployeeProfileModel.fromJson(Map<String, dynamic> json) =>
+      _$EmployeeProfileModelFromJson(json);
 }

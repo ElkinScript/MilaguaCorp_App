@@ -27,16 +27,16 @@ mixin _$ProductModel {
   ProductTypeModel? get productType => throw _privateConstructorUsedError;
   @JsonKey(name: 'active_price')
   String? get activePrice => throw _privateConstructorUsedError;
+  @JsonKey(name: 'price_recarga')
+  String? get priceRecarga => throw _privateConstructorUsedError;
+  @JsonKey(name: 'price_nuevo')
+  String? get priceNuevo => throw _privateConstructorUsedError;
   @JsonKey(name: 'stock_quantity')
   int get stockQuantity => throw _privateConstructorUsedError;
   bool get state => throw _privateConstructorUsedError;
 
-  /// Serializes this ProductModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ProductModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ProductModelCopyWith<ProductModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -53,6 +53,8 @@ abstract class $ProductModelCopyWith<$Res> {
       String description,
       @JsonKey(name: 'product_type') ProductTypeModel? productType,
       @JsonKey(name: 'active_price') String? activePrice,
+      @JsonKey(name: 'price_recarga') String? priceRecarga,
+      @JsonKey(name: 'price_nuevo') String? priceNuevo,
       @JsonKey(name: 'stock_quantity') int stockQuantity,
       bool state});
 
@@ -69,8 +71,6 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ProductModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -79,6 +79,8 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? description = null,
     Object? productType = freezed,
     Object? activePrice = freezed,
+    Object? priceRecarga = freezed,
+    Object? priceNuevo = freezed,
     Object? stockQuantity = null,
     Object? state = null,
   }) {
@@ -103,6 +105,14 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.activePrice
           : activePrice // ignore: cast_nullable_to_non_nullable
               as String?,
+      priceRecarga: freezed == priceRecarga
+          ? _value.priceRecarga
+          : priceRecarga // ignore: cast_nullable_to_non_nullable
+              as String?,
+      priceNuevo: freezed == priceNuevo
+          ? _value.priceNuevo
+          : priceNuevo // ignore: cast_nullable_to_non_nullable
+              as String?,
       stockQuantity: null == stockQuantity
           ? _value.stockQuantity
           : stockQuantity // ignore: cast_nullable_to_non_nullable
@@ -114,8 +124,6 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     ) as $Val);
   }
 
-  /// Create a copy of ProductModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ProductTypeModelCopyWith<$Res>? get productType {
@@ -143,6 +151,8 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       String description,
       @JsonKey(name: 'product_type') ProductTypeModel? productType,
       @JsonKey(name: 'active_price') String? activePrice,
+      @JsonKey(name: 'price_recarga') String? priceRecarga,
+      @JsonKey(name: 'price_nuevo') String? priceNuevo,
       @JsonKey(name: 'stock_quantity') int stockQuantity,
       bool state});
 
@@ -158,8 +168,6 @@ class __$$ProductModelImplCopyWithImpl<$Res>
       _$ProductModelImpl _value, $Res Function(_$ProductModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ProductModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -168,6 +176,8 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? description = null,
     Object? productType = freezed,
     Object? activePrice = freezed,
+    Object? priceRecarga = freezed,
+    Object? priceNuevo = freezed,
     Object? stockQuantity = null,
     Object? state = null,
   }) {
@@ -192,6 +202,14 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.activePrice
           : activePrice // ignore: cast_nullable_to_non_nullable
               as String?,
+      priceRecarga: freezed == priceRecarga
+          ? _value.priceRecarga
+          : priceRecarga // ignore: cast_nullable_to_non_nullable
+              as String?,
+      priceNuevo: freezed == priceNuevo
+          ? _value.priceNuevo
+          : priceNuevo // ignore: cast_nullable_to_non_nullable
+              as String?,
       stockQuantity: null == stockQuantity
           ? _value.stockQuantity
           : stockQuantity // ignore: cast_nullable_to_non_nullable
@@ -213,6 +231,8 @@ class _$ProductModelImpl implements _ProductModel {
       this.description = '',
       @JsonKey(name: 'product_type') this.productType,
       @JsonKey(name: 'active_price') this.activePrice,
+      @JsonKey(name: 'price_recarga') this.priceRecarga,
+      @JsonKey(name: 'price_nuevo') this.priceNuevo,
       @JsonKey(name: 'stock_quantity') this.stockQuantity = 0,
       this.state = true});
 
@@ -234,6 +254,12 @@ class _$ProductModelImpl implements _ProductModel {
   @JsonKey(name: 'active_price')
   final String? activePrice;
   @override
+  @JsonKey(name: 'price_recarga')
+  final String? priceRecarga;
+  @override
+  @JsonKey(name: 'price_nuevo')
+  final String? priceNuevo;
+  @override
   @JsonKey(name: 'stock_quantity')
   final int stockQuantity;
   @override
@@ -242,7 +268,7 @@ class _$ProductModelImpl implements _ProductModel {
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, name: $name, description: $description, productType: $productType, activePrice: $activePrice, stockQuantity: $stockQuantity, state: $state)';
+    return 'ProductModel(id: $id, name: $name, description: $description, productType: $productType, activePrice: $activePrice, priceRecarga: $priceRecarga, priceNuevo: $priceNuevo, stockQuantity: $stockQuantity, state: $state)';
   }
 
   @override
@@ -258,19 +284,21 @@ class _$ProductModelImpl implements _ProductModel {
                 other.productType == productType) &&
             (identical(other.activePrice, activePrice) ||
                 other.activePrice == activePrice) &&
+            (identical(other.priceRecarga, priceRecarga) ||
+                other.priceRecarga == priceRecarga) &&
+            (identical(other.priceNuevo, priceNuevo) ||
+                other.priceNuevo == priceNuevo) &&
             (identical(other.stockQuantity, stockQuantity) ||
                 other.stockQuantity == stockQuantity) &&
             (identical(other.state, state) || other.state == state));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, description,
-      productType, activePrice, stockQuantity, state);
+      productType, activePrice, priceRecarga, priceNuevo, stockQuantity, state);
 
-  /// Create a copy of ProductModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ProductModelImplCopyWith<_$ProductModelImpl> get copyWith =>
@@ -291,6 +319,8 @@ abstract class _ProductModel implements ProductModel {
       final String description,
       @JsonKey(name: 'product_type') final ProductTypeModel? productType,
       @JsonKey(name: 'active_price') final String? activePrice,
+      @JsonKey(name: 'price_recarga') final String? priceRecarga,
+      @JsonKey(name: 'price_nuevo') final String? priceNuevo,
       @JsonKey(name: 'stock_quantity') final int stockQuantity,
       final bool state}) = _$ProductModelImpl;
 
@@ -310,15 +340,18 @@ abstract class _ProductModel implements ProductModel {
   @JsonKey(name: 'active_price')
   String? get activePrice;
   @override
+  @JsonKey(name: 'price_recarga')
+  String? get priceRecarga;
+  @override
+  @JsonKey(name: 'price_nuevo')
+  String? get priceNuevo;
+  @override
   @JsonKey(name: 'stock_quantity')
   int get stockQuantity;
   @override
   bool get state;
-
-  /// Create a copy of ProductModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ProductModelImplCopyWith<_$ProductModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -334,12 +367,8 @@ mixin _$ProductTypeModel {
   @JsonKey(name: 'is_returnable')
   bool get isReturnable => throw _privateConstructorUsedError;
 
-  /// Serializes this ProductTypeModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of ProductTypeModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ProductTypeModelCopyWith<ProductTypeModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -364,8 +393,6 @@ class _$ProductTypeModelCopyWithImpl<$Res, $Val extends ProductTypeModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ProductTypeModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -410,8 +437,6 @@ class __$$ProductTypeModelImplCopyWithImpl<$Res>
       $Res Function(_$ProductTypeModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of ProductTypeModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -473,13 +498,11 @@ class _$ProductTypeModelImpl implements _ProductTypeModel {
                 other.isReturnable == isReturnable));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, name, isReturnable);
 
-  /// Create a copy of ProductTypeModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ProductTypeModelImplCopyWith<_$ProductTypeModelImpl> get copyWith =>
@@ -511,11 +534,8 @@ abstract class _ProductTypeModel implements ProductTypeModel {
   @override
   @JsonKey(name: 'is_returnable')
   bool get isReturnable;
-
-  /// Create a copy of ProductTypeModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ProductTypeModelImplCopyWith<_$ProductTypeModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

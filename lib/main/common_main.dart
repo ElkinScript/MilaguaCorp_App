@@ -1,3 +1,5 @@
+import 'package:device_preview_plus/device_preview_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +16,13 @@ Future<void> commonMain({
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  runApp(const ProviderScope(child: AppWidget()));
+  // Habilita rotación libre para que DevicePreview pueda simular tablet/PC.
+  await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+  runApp(
+    DevicePreview(
+      // Solo activo en debug. En release el wrapper se desactiva solo.
+      enabled: !kReleaseMode,
+      builder: (context) => const ProviderScope(child: AppWidget()),
+    ),
+  );
 }

@@ -1,3 +1,4 @@
+import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:flutter/material.dart';
 
 import '../core/constants/themes/app_theme.dart';
@@ -16,6 +17,12 @@ class AppWidget extends StatelessWidget {
       title: 'Milagua Corp',
       debugShowCheckedModeBanner: false,
       theme: AppTheme().getThemeData(context),
+      // ── Integración con DevicePreview ────────────────────────
+      // Permite cambiar el tamaño del dispositivo (móvil / tablet / PC)
+      // desde el panel lateral en modo debug. Se desactiva en release.
+      useInheritedMediaQuery: true,
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
     );
   }
 }

@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../feature/auth/view/widget/login_screen.dart';
 import '../feature/dashboard/view/widget/home_screen.dart';
 import '../feature/product/view/widget/product_screen.dart';
+import '../feature/proforma/view/widget/proforma_screen.dart';
+import '../feature/report/view/widget/report_screen.dart';
+import '../feature/sale/domain/sale_model.dart';
 import '../feature/sale/view/widget/sale_screen.dart';
 
 class AppModule {
@@ -32,6 +35,18 @@ class AppModule {
         path: ProductScreen.routeName,
         builder: (BuildContext context, GoRouterState state) =>
             const ProductScreen(),
+      ),
+      GoRoute(
+        path: ReportScreen.routeName,
+        builder: (BuildContext context, GoRouterState state) =>
+            const ReportScreen(),
+      ),
+      GoRoute(
+        path: ProformaScreen.routeName,
+        builder: (BuildContext context, GoRouterState state) {
+          final sale = state.extra as SaleModel;
+          return ProformaScreen(sale: sale);
+        },
       ),
     ],
   );

@@ -12,12 +12,20 @@ class ProductModel with _$ProductModel {
     @Default('') String description,
     @JsonKey(name: 'product_type') ProductTypeModel? productType,
     @JsonKey(name: 'active_price') String? activePrice,
+    @JsonKey(name: 'price_recarga') String? priceRecarga,
+    @JsonKey(name: 'price_nuevo') String? priceNuevo,
     @JsonKey(name: 'stock_quantity') @Default(0) int stockQuantity,
     @Default(true) bool state,
   }) = _ProductModel;
 
   factory ProductModel.fromJson(Map<String, dynamic> json) =>
       _$ProductModelFromJson(json);
+}
+
+extension ProductModelX on ProductModel {
+  /// Precio según si el cliente tiene poma o no.
+  String priceFor(bool hasContainer) =>
+      hasContainer ? (priceRecarga ?? activePrice ?? '0.00') : (priceNuevo ?? activePrice ?? '0.00');
 }
 
 @freezed
