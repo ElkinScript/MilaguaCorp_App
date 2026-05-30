@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../feature/proforma/view/widget/proforma_screen.dart';
 import '../../domain/sale_model.dart';
 import '../controller/sale_controller.dart';
 
@@ -134,8 +136,8 @@ class _SaleCard extends StatelessWidget {
                 const Gap(4),
                 if (sale.paymentMethodDisplay.isNotEmpty)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
                       color: const Color(0x1F0ea5c8),
                       borderRadius: BorderRadius.circular(20),
@@ -149,6 +151,29 @@ class _SaleCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                const Gap(4),
+                GestureDetector(
+                  onTap: () => context.push(
+                    ProformaScreen.routeName,
+                    extra: sale,
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.receipt_outlined,
+                          size: 14, color: Color(0xFF64748b)),
+                      Gap(2),
+                      Text(
+                        'Ver proforma',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Color(0xFF64748b),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ],

@@ -16,6 +16,8 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
           : ProductTypeModel.fromJson(
               json['product_type'] as Map<String, dynamic>),
       activePrice: json['active_price'] as String?,
+      priceRecarga: json['price_recarga'] as String?,
+      priceNuevo: json['price_nuevo'] as String?,
       stockQuantity: (json['stock_quantity'] as num?)?.toInt() ?? 0,
       state: json['state'] as bool? ?? true,
     );
@@ -27,6 +29,8 @@ Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
       'description': instance.description,
       'product_type': instance.productType,
       'active_price': instance.activePrice,
+      'price_recarga': instance.priceRecarga,
+      'price_nuevo': instance.priceNuevo,
       'stock_quantity': instance.stockQuantity,
       'state': instance.state,
     };

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/logger.dart';
 import '../../../../modules/common/drivers/http/dio_http_client.dart';
 import '../../domain/dashboard_model.dart';
 
@@ -14,7 +15,11 @@ class DashboardService {
   final DioHttpClient _http;
 
   Future<DashboardModel> getDashboard() async {
-    final response = await _http().get('/api/dashboard/');
+    const url = '/api/dashboard/';
+    DebugLogger(runtimeType).request(url);
+    final response = await _http().get(url);
+    DebugLogger(runtimeType)
+        .response(url, [response.statusCode, response.data]);
     return DashboardModel.fromJson(response.data as Map<String, dynamic>);
   }
 }

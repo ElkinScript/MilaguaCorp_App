@@ -18,6 +18,10 @@ _$UserModelImpl _$$UserModelImplFromJson(Map<String, dynamic> json) =>
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      employeeProfile: json['employee_profile'] == null
+          ? null
+          : EmployeeProfileModel.fromJson(
+              json['employee_profile'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
@@ -29,4 +33,23 @@ Map<String, dynamic> _$$UserModelImplToJson(_$UserModelImpl instance) =>
       'email': instance.email,
       'full_name': instance.fullName,
       'groups': instance.groups,
+      'employee_profile': instance.employeeProfile,
+    };
+
+_$EmployeeProfileModelImpl _$$EmployeeProfileModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$EmployeeProfileModelImpl(
+      id: (json['id'] as num).toInt(),
+      branchName: json['branch_name'] as String? ?? '',
+      phone: json['phone'] as String? ?? '',
+      identificationNumber: json['identification_number'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$$EmployeeProfileModelImplToJson(
+        _$EmployeeProfileModelImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'branch_name': instance.branchName,
+      'phone': instance.phone,
+      'identification_number': instance.identificationNumber,
     };

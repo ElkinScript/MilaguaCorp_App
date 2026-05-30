@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_strings.dart';
@@ -19,7 +22,7 @@ class DioHttpClient {
   final LocalStorage localDataSource;
   Dio? _dio;
 
-  /// Returns the singleton [Dio] instance, creating it on first call.
+  /// Singleton Dio — interceptors y headers se configuran una sola vez.
   Dio call() => _dio ??= _createDio();
 
   Dio _createDio() {
@@ -29,6 +32,7 @@ class DioHttpClient {
       ..options.connectTimeout = const Duration(seconds: 30)
       ..options.receiveTimeout = const Duration(seconds: 30);
 
+    // ── Interceptor de autenticación + headers comunes ──────────
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -45,6 +49,67 @@ class DioHttpClient {
       ),
     );
 
+    // ── Interceptor de logging (sólo en debug) ──────────────────
+    // Imprime cada request / response / error con formato bonito
+    // exactamente como hace Hey Support en su terminal.
+    if (kDebugMode) {
+      dio.interceptors.add(_PrettyLogInterceptor());
+    }
+
     return dio;
+  }
+}
+
+/// Interceptor de logs estilo Support.
+/// Imprime: método, URL, headers, body, status code y data.
+class _PrettyLogInterceptor extends Interceptor {
+  static const _bar = '────────────────────────────────────────';
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    debugPrint('\n$_bar');
+    debugPrint('➡️  REQUEST  ${options.method}  ${options.uri}');
+    if (options.headers.isNotEmpty) {
+      debugPrint('   Headers: ${_pretty(options.headers)}');
+    }
+    if (options.data != null) {
+      debugPrint('   Body:    ${_pretty(options.data)}');
+    }
+    if (options.queryParameters.isNotEmpty) {
+      debugPrint('   Query:   ${_pretty(options.queryParameters)}');
+    }
+    handler.next(options);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    debugPrint('\n$_bar');
+    debugPrint(
+        '✅ RESPONSE ${response.statusCode}  ${response.requestOptions.method}  ${response.requestOptions.uri}');
+    if (response.data != null) {
+      debugPrint('   Data:    ${_pretty(response.data)}');
+    }
+    handler.next(response);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    debugPrint('\n$_bar');
+    debugPrint(
+        '❌ ERROR    ${err.response?.statusCode ?? '---'}  ${err.requestOptions.method}  ${err.requestOptions.uri}');
+    debugPrint('   Type:    ${err.type}');
+    debugPrint('   Message: ${err.message}');
+    if (err.response?.data != null) {
+      debugPrint('   Body:    ${_pretty(err.response?.data)}');
+    }
+    handler.next(err);
+  }
+
+  String _pretty(Object? data) {
+    try {
+      return const JsonEncoder.withIndent('  ').convert(data);
+    } catch (_) {
+      return data.toString();
+    }
   }
 }

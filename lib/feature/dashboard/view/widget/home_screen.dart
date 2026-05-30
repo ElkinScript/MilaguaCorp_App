@@ -3,8 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../auth/domain/user_model.dart';
 import '../../../auth/view/controller/auth_controller.dart';
+import '../../../new_sale/view/widget/new_sale_bottom_sheet.dart';
 import '../../../product/view/widget/product_screen.dart';
+import '../../../report/view/widget/report_screen.dart';
+import '../../../sale/view/controller/sale_controller.dart';
 import '../../../sale/view/widget/sale_screen.dart';
 import '../controller/dashboard_controller.dart';
 
@@ -20,20 +24,60 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
 
+  // 4 tabs — center FAB abre nueva venta (no es un tab)
   static const _tabs = [
     _DashboardTab(),
     SaleScreen(),
     ProductScreen(),
+    ReportScreen(),
   ];
+
+  Future<void> _openNewSale() async {
+    final created = await NewSaleBottomSheet.show(context);
+    if (created == true) {
+      // ignore: unused_result
+      ref.refresh(dashboardControllerProvider);
+      // ignore: unused_result
+      ref.refresh(saleControllerProvider);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authControllerProvider);
+    final userInfo = authState.mapOrNull(authenticated: (s) => s.user);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Milagua Corp'),
+        backgroundColor: const Color(0xFF0ea5c8),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              userInfo?.displayName ?? 'Milagua Corp',
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            if ((userInfo?.branchName ?? '').isNotEmpty)
+              Text(
+                userInfo!.branchName,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: Color(0xFFbae6fd),
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout, color: Colors.white),
             tooltip: 'Cerrar sesión',
             onPressed: () async {
               final router = GoRouter.of(context);
@@ -48,28 +92,105 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         index: _currentIndex,
         children: _tabs,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
-        selectedItemColor: const Color(0xFF0ea5c8),
-        unselectedItemColor: const Color(0xFF94a3b8),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-            label: 'Inicio',
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF0ea5c8),
+        elevation: 4,
+        onPressed: _openNewSale,
+        child: const Icon(Icons.shopping_cart, color: Colors.white, size: 26),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.white,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6,
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // Left side: Inicio + Ventas
+              _NavItem(
+                icon: Icons.dashboard_outlined,
+                activeIcon: Icons.dashboard,
+                label: 'Inicio',
+                active: _currentIndex == 0,
+                onTap: () => setState(() => _currentIndex = 0),
+              ),
+              _NavItem(
+                icon: Icons.receipt_long_outlined,
+                activeIcon: Icons.receipt_long,
+                label: 'Ventas',
+                active: _currentIndex == 1,
+                onTap: () => setState(() => _currentIndex = 1),
+              ),
+              // Center spacer for FAB notch
+              const SizedBox(width: 48),
+              // Right side: Productos + Reportes
+              _NavItem(
+                icon: Icons.inventory_2_outlined,
+                activeIcon: Icons.inventory_2,
+                label: 'Productos',
+                active: _currentIndex == 2,
+                onTap: () => setState(() => _currentIndex = 2),
+              ),
+              _NavItem(
+                icon: Icons.bar_chart_outlined,
+                activeIcon: Icons.bar_chart,
+                label: 'Reportes',
+                active: _currentIndex == 3,
+                onTap: () => setState(() => _currentIndex = 3),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt_long_outlined),
-            activeIcon: Icon(Icons.receipt_long),
-            label: 'Ventas',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.inventory_2_outlined),
-            activeIcon: Icon(Icons.inventory_2),
-            label: 'Productos',
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  const _NavItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    const primary = Color(0xFF0ea5c8);
+    const muted = Color(0xFF94a3b8);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              active ? activeIcon : icon,
+              color: active ? primary : muted,
+              size: 22,
+            ),
+            const Gap(2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                color: active ? primary : muted,
+                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -178,7 +299,8 @@ class _DashboardTab extends ConsumerWidget {
                         child:
                             Icon(Icons.receipt, color: Color(0xFF0ea5c8)),
                       ),
-                      title: Text(s.client.isNotEmpty ? s.client : 'Sin cliente',
+                      title: Text(
+                          s.client.isNotEmpty ? s.client : 'Sin cliente',
                           style: const TextStyle(
                               fontSize: 14, fontWeight: FontWeight.w600)),
                       subtitle: Text(s.saleDate,

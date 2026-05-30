@@ -25,12 +25,8 @@ mixin _$AuthTokenModel {
   @JsonKey(name: 'refresh')
   String get refreshToken => throw _privateConstructorUsedError;
 
-  /// Serializes this AuthTokenModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of AuthTokenModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $AuthTokenModelCopyWith<AuthTokenModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -56,8 +52,6 @@ class _$AuthTokenModelCopyWithImpl<$Res, $Val extends AuthTokenModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of AuthTokenModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -98,8 +92,6 @@ class __$$AuthTokenModelImplCopyWithImpl<$Res>
       _$AuthTokenModelImpl _value, $Res Function(_$AuthTokenModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of AuthTokenModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -152,13 +144,11 @@ class _$AuthTokenModelImpl implements _AuthTokenModel {
                 other.refreshToken == refreshToken));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, accessToken, refreshToken);
 
-  /// Create a copy of AuthTokenModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$AuthTokenModelImplCopyWith<_$AuthTokenModelImpl> get copyWith =>
@@ -188,11 +178,8 @@ abstract class _AuthTokenModel implements AuthTokenModel {
   @override
   @JsonKey(name: 'refresh')
   String get refreshToken;
-
-  /// Create a copy of AuthTokenModel
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$AuthTokenModelImplCopyWith<_$AuthTokenModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

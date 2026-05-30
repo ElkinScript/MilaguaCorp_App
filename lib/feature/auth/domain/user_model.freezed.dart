@@ -30,14 +30,14 @@ mixin _$UserModel {
   @JsonKey(name: 'full_name')
   String get fullName =>
       throw _privateConstructorUsedError; // API returns groups as List<String> (flat names)
-  List<String> get groups => throw _privateConstructorUsedError;
+  List<String> get groups =>
+      throw _privateConstructorUsedError; // employee_profile nested object — nullable
+  @JsonKey(name: 'employee_profile')
+  EmployeeProfileModel? get employeeProfile =>
+      throw _privateConstructorUsedError;
 
-  /// Serializes this UserModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of UserModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $UserModelCopyWith<UserModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -54,7 +54,11 @@ abstract class $UserModelCopyWith<$Res> {
       @JsonKey(name: 'last_name') String lastName,
       String email,
       @JsonKey(name: 'full_name') String fullName,
-      List<String> groups});
+      List<String> groups,
+      @JsonKey(name: 'employee_profile')
+      EmployeeProfileModel? employeeProfile});
+
+  $EmployeeProfileModelCopyWith<$Res>? get employeeProfile;
 }
 
 /// @nodoc
@@ -67,8 +71,6 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of UserModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -79,6 +81,7 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
     Object? email = null,
     Object? fullName = null,
     Object? groups = null,
+    Object? employeeProfile = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -109,7 +112,24 @@ class _$UserModelCopyWithImpl<$Res, $Val extends UserModel>
           ? _value.groups
           : groups // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      employeeProfile: freezed == employeeProfile
+          ? _value.employeeProfile
+          : employeeProfile // ignore: cast_nullable_to_non_nullable
+              as EmployeeProfileModel?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $EmployeeProfileModelCopyWith<$Res>? get employeeProfile {
+    if (_value.employeeProfile == null) {
+      return null;
+    }
+
+    return $EmployeeProfileModelCopyWith<$Res>(_value.employeeProfile!,
+        (value) {
+      return _then(_value.copyWith(employeeProfile: value) as $Val);
+    });
   }
 }
 
@@ -128,7 +148,12 @@ abstract class _$$UserModelImplCopyWith<$Res>
       @JsonKey(name: 'last_name') String lastName,
       String email,
       @JsonKey(name: 'full_name') String fullName,
-      List<String> groups});
+      List<String> groups,
+      @JsonKey(name: 'employee_profile')
+      EmployeeProfileModel? employeeProfile});
+
+  @override
+  $EmployeeProfileModelCopyWith<$Res>? get employeeProfile;
 }
 
 /// @nodoc
@@ -139,8 +164,6 @@ class __$$UserModelImplCopyWithImpl<$Res>
       _$UserModelImpl _value, $Res Function(_$UserModelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of UserModel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -151,6 +174,7 @@ class __$$UserModelImplCopyWithImpl<$Res>
     Object? email = null,
     Object? fullName = null,
     Object? groups = null,
+    Object? employeeProfile = freezed,
   }) {
     return _then(_$UserModelImpl(
       id: null == id
@@ -181,6 +205,10 @@ class __$$UserModelImplCopyWithImpl<$Res>
           ? _value._groups
           : groups // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      employeeProfile: freezed == employeeProfile
+          ? _value.employeeProfile
+          : employeeProfile // ignore: cast_nullable_to_non_nullable
+              as EmployeeProfileModel?,
     ));
   }
 }
@@ -195,7 +223,8 @@ class _$UserModelImpl implements _UserModel {
       @JsonKey(name: 'last_name') this.lastName = '',
       this.email = '',
       @JsonKey(name: 'full_name') this.fullName = '',
-      final List<String> groups = const []})
+      final List<String> groups = const [],
+      @JsonKey(name: 'employee_profile') this.employeeProfile = null})
       : _groups = groups;
 
   factory _$UserModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -228,9 +257,14 @@ class _$UserModelImpl implements _UserModel {
     return EqualUnmodifiableListView(_groups);
   }
 
+// employee_profile nested object — nullable
+  @override
+  @JsonKey(name: 'employee_profile')
+  final EmployeeProfileModel? employeeProfile;
+
   @override
   String toString() {
-    return 'UserModel(id: $id, username: $username, firstName: $firstName, lastName: $lastName, email: $email, fullName: $fullName, groups: $groups)';
+    return 'UserModel(id: $id, username: $username, firstName: $firstName, lastName: $lastName, email: $email, fullName: $fullName, groups: $groups, employeeProfile: $employeeProfile)';
   }
 
   @override
@@ -248,17 +282,25 @@ class _$UserModelImpl implements _UserModel {
             (identical(other.email, email) || other.email == email) &&
             (identical(other.fullName, fullName) ||
                 other.fullName == fullName) &&
-            const DeepCollectionEquality().equals(other._groups, _groups));
+            const DeepCollectionEquality().equals(other._groups, _groups) &&
+            (identical(other.employeeProfile, employeeProfile) ||
+                other.employeeProfile == employeeProfile));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, username, firstName,
-      lastName, email, fullName, const DeepCollectionEquality().hash(_groups));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      username,
+      firstName,
+      lastName,
+      email,
+      fullName,
+      const DeepCollectionEquality().hash(_groups),
+      employeeProfile);
 
-  /// Create a copy of UserModel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$UserModelImplCopyWith<_$UserModelImpl> get copyWith =>
@@ -280,7 +322,9 @@ abstract class _UserModel implements UserModel {
       @JsonKey(name: 'last_name') final String lastName,
       final String email,
       @JsonKey(name: 'full_name') final String fullName,
-      final List<String> groups}) = _$UserModelImpl;
+      final List<String> groups,
+      @JsonKey(name: 'employee_profile')
+      final EmployeeProfileModel? employeeProfile}) = _$UserModelImpl;
 
   factory _UserModel.fromJson(Map<String, dynamic> json) =
       _$UserModelImpl.fromJson;
@@ -299,14 +343,228 @@ abstract class _UserModel implements UserModel {
   String get email;
   @override
   @JsonKey(name: 'full_name')
-  String get fullName; // API returns groups as List<String> (flat names)
-  @override
+  String get fullName;
+  @override // API returns groups as List<String> (flat names)
   List<String> get groups;
-
-  /// Create a copy of UserModel
-  /// with the given fields replaced by the non-null parameter values.
+  @override // employee_profile nested object — nullable
+  @JsonKey(name: 'employee_profile')
+  EmployeeProfileModel? get employeeProfile;
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$UserModelImplCopyWith<_$UserModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+EmployeeProfileModel _$EmployeeProfileModelFromJson(Map<String, dynamic> json) {
+  return _EmployeeProfileModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EmployeeProfileModel {
+  int get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'branch_name')
+  String get branchName => throw _privateConstructorUsedError;
+  String get phone => throw _privateConstructorUsedError;
+  @JsonKey(name: 'identification_number')
+  String get identificationNumber => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $EmployeeProfileModelCopyWith<EmployeeProfileModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EmployeeProfileModelCopyWith<$Res> {
+  factory $EmployeeProfileModelCopyWith(EmployeeProfileModel value,
+          $Res Function(EmployeeProfileModel) then) =
+      _$EmployeeProfileModelCopyWithImpl<$Res, EmployeeProfileModel>;
+  @useResult
+  $Res call(
+      {int id,
+      @JsonKey(name: 'branch_name') String branchName,
+      String phone,
+      @JsonKey(name: 'identification_number') String identificationNumber});
+}
+
+/// @nodoc
+class _$EmployeeProfileModelCopyWithImpl<$Res,
+        $Val extends EmployeeProfileModel>
+    implements $EmployeeProfileModelCopyWith<$Res> {
+  _$EmployeeProfileModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? branchName = null,
+    Object? phone = null,
+    Object? identificationNumber = null,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      branchName: null == branchName
+          ? _value.branchName
+          : branchName // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      identificationNumber: null == identificationNumber
+          ? _value.identificationNumber
+          : identificationNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$EmployeeProfileModelImplCopyWith<$Res>
+    implements $EmployeeProfileModelCopyWith<$Res> {
+  factory _$$EmployeeProfileModelImplCopyWith(_$EmployeeProfileModelImpl value,
+          $Res Function(_$EmployeeProfileModelImpl) then) =
+      __$$EmployeeProfileModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int id,
+      @JsonKey(name: 'branch_name') String branchName,
+      String phone,
+      @JsonKey(name: 'identification_number') String identificationNumber});
+}
+
+/// @nodoc
+class __$$EmployeeProfileModelImplCopyWithImpl<$Res>
+    extends _$EmployeeProfileModelCopyWithImpl<$Res, _$EmployeeProfileModelImpl>
+    implements _$$EmployeeProfileModelImplCopyWith<$Res> {
+  __$$EmployeeProfileModelImplCopyWithImpl(_$EmployeeProfileModelImpl _value,
+      $Res Function(_$EmployeeProfileModelImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? branchName = null,
+    Object? phone = null,
+    Object? identificationNumber = null,
+  }) {
+    return _then(_$EmployeeProfileModelImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      branchName: null == branchName
+          ? _value.branchName
+          : branchName // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      identificationNumber: null == identificationNumber
+          ? _value.identificationNumber
+          : identificationNumber // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EmployeeProfileModelImpl implements _EmployeeProfileModel {
+  const _$EmployeeProfileModelImpl(
+      {required this.id,
+      @JsonKey(name: 'branch_name') this.branchName = '',
+      this.phone = '',
+      @JsonKey(name: 'identification_number') this.identificationNumber = ''});
+
+  factory _$EmployeeProfileModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EmployeeProfileModelImplFromJson(json);
+
+  @override
+  final int id;
+  @override
+  @JsonKey(name: 'branch_name')
+  final String branchName;
+  @override
+  @JsonKey()
+  final String phone;
+  @override
+  @JsonKey(name: 'identification_number')
+  final String identificationNumber;
+
+  @override
+  String toString() {
+    return 'EmployeeProfileModel(id: $id, branchName: $branchName, phone: $phone, identificationNumber: $identificationNumber)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EmployeeProfileModelImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.branchName, branchName) ||
+                other.branchName == branchName) &&
+            (identical(other.phone, phone) || other.phone == phone) &&
+            (identical(other.identificationNumber, identificationNumber) ||
+                other.identificationNumber == identificationNumber));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, branchName, phone, identificationNumber);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EmployeeProfileModelImplCopyWith<_$EmployeeProfileModelImpl>
+      get copyWith =>
+          __$$EmployeeProfileModelImplCopyWithImpl<_$EmployeeProfileModelImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EmployeeProfileModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EmployeeProfileModel implements EmployeeProfileModel {
+  const factory _EmployeeProfileModel(
+      {required final int id,
+      @JsonKey(name: 'branch_name') final String branchName,
+      final String phone,
+      @JsonKey(name: 'identification_number')
+      final String identificationNumber}) = _$EmployeeProfileModelImpl;
+
+  factory _EmployeeProfileModel.fromJson(Map<String, dynamic> json) =
+      _$EmployeeProfileModelImpl.fromJson;
+
+  @override
+  int get id;
+  @override
+  @JsonKey(name: 'branch_name')
+  String get branchName;
+  @override
+  String get phone;
+  @override
+  @JsonKey(name: 'identification_number')
+  String get identificationNumber;
+  @override
+  @JsonKey(ignore: true)
+  _$$EmployeeProfileModelImplCopyWith<_$EmployeeProfileModelImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
