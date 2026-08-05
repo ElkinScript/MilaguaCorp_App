@@ -76,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         height: (MediaQuery.sizeOf(context).height * 0.32)
                             .clamp(220, 420),
                         child: Lottie.asset(
-                          'assets/lottie/earth_globe.json',
+                          'assets/lottie/girl_watering_plants.json',
                           repeat: true,
                           fit: BoxFit.contain,
                         ),

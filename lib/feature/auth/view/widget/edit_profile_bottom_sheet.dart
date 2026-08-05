@@ -90,6 +90,7 @@ class _EditProfileBottomSheetState
     return MgBottomSheet(
       title: 'Editar perfil',
       scrollable: false,
+      showCloseButton: false,
       initialHeightFactor: 0.72,
       childBuilder: (context, scrollController) {
         return ListView(

@@ -40,6 +40,7 @@ class MgBottomSheet extends StatelessWidget {
     this.initialHeightFactor = kSheetHeightLg,
     this.minChildSize = 0.35,
     this.scrollable = false,
+    this.showCloseButton = true,
     this.onClose,
     this.padding,
     this.backgroundColor,
@@ -70,6 +71,10 @@ class MgBottomSheet extends StatelessWidget {
   /// false (default) → altura fija de [initialHeightFactor]; si el
   /// contenido no cabe, [childBuilder]/[child] deben scrollear por su cuenta.
   final bool scrollable;
+
+  /// El sheet siempre se puede cerrar deslizando hacia abajo o tocando
+  /// fuera — este botón es un atajo visible adicional, opcional.
+  final bool showCloseButton;
 
   final VoidCallback? onClose;
   final EdgeInsets? padding;
@@ -177,17 +182,19 @@ class MgBottomSheet extends StatelessWidget {
             action!,
             const Gap(separatorXs),
           ],
-          IconButton(
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: AppColors.error.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
+          if (showCloseButton)
+            IconButton(
+              icon: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child:
+                    const Icon(Icons.close, size: 22, color: AppColors.error),
               ),
-              child: const Icon(Icons.close, size: 22, color: AppColors.error),
+              onPressed: onClose ?? () => Navigator.pop(context, false),
             ),
-            onPressed: onClose ?? () => Navigator.pop(context, false),
-          ),
         ],
       ),
     );

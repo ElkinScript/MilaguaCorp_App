@@ -121,7 +121,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       runSpacing: 4,
                       children: [
                         if (userInfo?.groupName.isNotEmpty ?? false)
-                          _HeaderChip(label: userInfo!.groupName),
+                          _HeaderChip(
+                            label: userInfo!.groupName,
+                            icon: Icons.shield_outlined,
+                          ),
                         if (userInfo?.username.isNotEmpty ?? false)
                           _HeaderChip(
                             label: userInfo!.username,

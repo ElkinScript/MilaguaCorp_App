@@ -46,6 +46,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
     return MgBottomSheet(
       title: 'Nueva Venta',
       scrollable: false,
+      showCloseButton: false,
       initialHeightFactor: 0.92,
       padding: EdgeInsets.zero,
       childBuilder: (context, scrollController) {
