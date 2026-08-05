@@ -1,5 +1,5 @@
 @echo off
-set FLUTTER=C:\Users\ELKIN_MOYON\fvm\versions\3.35.0\bin\flutter.bat
+if "%FLUTTER%"=="" set FLUTTER=flutter
 echo =^> flutter pub get...
 call "%FLUTTER%" pub get
 echo =^> Generando env.g.dart...

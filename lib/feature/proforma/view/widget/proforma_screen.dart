@@ -3,6 +3,8 @@ import 'package:gap/gap.dart';
 
 import '../../../sale/domain/sale_model.dart';
 
+import '../../../../core/helpers/app_colors.dart';
+
 class ProformaScreen extends StatelessWidget {
   static const routeName = '/proforma';
 
@@ -19,15 +21,15 @@ class ProformaScreen extends StatelessWidget {
         sale.client?.phone.isNotEmpty == true ? sale.client!.phone : '—';
     final clientEmail =
         sale.client?.email.isNotEmpty == true ? sale.client!.email : '—';
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFf1f5f9),
       appBar: AppBar(
         title: Text(
           'Proforma #${sale.id}',
           style: const TextStyle(fontWeight: FontWeight.w700),
         ),
-        backgroundColor: const Color(0xFF0ea5c8),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -56,7 +58,7 @@ class ProformaScreen extends StatelessWidget {
                               width: 48,
                               height: 48,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF0ea5c8),
+                                color: AppColors.primary,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(Icons.water_drop,
@@ -68,14 +70,15 @@ class ProformaScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF0ea5c8),
+                                color: AppColors.primary,
                               ),
                             ),
-                            const Text(
+                            Text(
                               'Agua purificada de calidad',
                               style: TextStyle(
-                                  fontSize: 11,
-                                  color: Color(0xFF94a3b8)),
+                                fontSize: 11,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
@@ -86,7 +89,7 @@ class ProformaScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF0ea5c8),
+                                color: AppColors.primary,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Text(
@@ -102,17 +105,17 @@ class ProformaScreen extends StatelessWidget {
                             const Gap(8),
                             Text(
                               'N° ${sale.id.toString().padLeft(6, '0')}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xFF475569),
+                                color: colorScheme.onSurface,
                               ),
                             ),
                             Text(
                               sale.saleDate,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
-                                color: Color(0xFF94a3b8),
+                                color: colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -134,12 +137,12 @@ class ProformaScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'CLIENTE',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF94a3b8),
+                        color: colorScheme.onSurfaceVariant,
                         letterSpacing: 1.2,
                       ),
                     ),
@@ -191,45 +194,44 @@ class ProformaScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'DETALLE DE PRODUCTOS',
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF94a3b8),
+                        color: colorScheme.onSurfaceVariant,
                         letterSpacing: 1.2,
                       ),
                     ),
                     const Gap(12),
                     // Table header
                     const _TableHeader(),
-                    const Divider(color: Color(0xFFe2e8f0)),
+                    Divider(color: colorScheme.outlineVariant),
                     if (sale.details.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Center(
                           child: Text(
                             'Sin detalle de productos',
-                            style:
-                                TextStyle(color: Color(0xFF94a3b8)),
+                            style: TextStyle(color: colorScheme.onSurfaceVariant),
                           ),
                         ),
                       )
                     else
                       ...sale.details.map((d) => _TableRow(detail: d)),
-                    const Divider(color: Color(0xFFe2e8f0)),
+                    Divider(color: colorScheme.outlineVariant),
                     // Total row
                     Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          const Text(
+                          Text(
                             'TOTAL',
                             style: TextStyle(
                               fontWeight: FontWeight.w800,
                               fontSize: 16,
-                              color: Color(0xFF1e293b),
+                              color: colorScheme.onSurface,
                             ),
                           ),
                           const Gap(24),
@@ -238,7 +240,7 @@ class ProformaScreen extends StatelessWidget {
                             style: const TextStyle(
                               fontWeight: FontWeight.w800,
                               fontSize: 22,
-                              color: Color(0xFF0ea5c8),
+                              color: AppColors.primary,
                             ),
                           ),
                         ],
@@ -259,20 +261,20 @@ class ProformaScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'OBSERVACIONES',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF94a3b8),
+                          color: colorScheme.onSurfaceVariant,
                           letterSpacing: 1.2,
                         ),
                       ),
                       const Gap(8),
                       Text(
                         sale.observation,
-                        style: const TextStyle(
-                            fontSize: 14, color: Color(0xFF475569)),
+                        style: TextStyle(
+                            fontSize: 14, color: colorScheme.onSurface),
                       ),
                     ],
                   ),
@@ -281,22 +283,22 @@ class ProformaScreen extends StatelessWidget {
             ],
             const Gap(24),
             // Footer
-            const Center(
+            Center(
               child: Text(
                 'Documento generado por Milagua Corp App',
                 style: TextStyle(
                   fontSize: 11,
-                  color: Color(0xFF94a3b8),
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ),
             const Gap(4),
-            const Center(
+            Center(
               child: Text(
                 'Este documento no tiene validez tributaria',
                 style: TextStyle(
                   fontSize: 10,
-                  color: Color(0xFFcbd5e1),
+                  color: colorScheme.outline,
                 ),
               ),
             ),
@@ -320,24 +322,24 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF0ea5c8)),
+          Icon(icon, size: 16, color: AppColors.primary),
           const Gap(8),
           Text(
             '$label: ',
-            style: const TextStyle(
-                fontSize: 13, color: Color(0xFF64748b)),
+            style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF1e293b),
+                color: colorScheme.onSurface,
               ),
               textAlign: TextAlign.end,
             ),
@@ -353,54 +355,29 @@ class _TableHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    final style = TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      color: muted,
+    );
+    return Row(
       children: [
         Expanded(
           flex: 4,
-          child: Text(
-            'Producto',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF64748b),
-            ),
-          ),
+          child: Text('Producto', style: style),
         ),
         SizedBox(
           width: 40,
-          child: Text(
-            'Qty',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF64748b),
-            ),
-          ),
+          child: Text('Qty', textAlign: TextAlign.center, style: style),
         ),
         SizedBox(
           width: 64,
-          child: Text(
-            'P.Unit.',
-            textAlign: TextAlign.end,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF64748b),
-            ),
-          ),
+          child: Text('P.Unit.', textAlign: TextAlign.end, style: style),
         ),
         SizedBox(
           width: 72,
-          child: Text(
-            'Subtotal',
-            textAlign: TextAlign.end,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF64748b),
-            ),
-          ),
+          child: Text('Subtotal', textAlign: TextAlign.end, style: style),
         ),
       ],
     );
@@ -414,6 +391,7 @@ class _TableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -425,17 +403,17 @@ class _TableRow extends StatelessWidget {
               children: [
                 Text(
                   detail.productName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF1e293b),
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 if (detail.productType.isNotEmpty)
                   Text(
                     detail.productType,
-                    style: const TextStyle(
-                        fontSize: 11, color: Color(0xFF94a3b8)),
+                    style: TextStyle(
+                        fontSize: 11, color: colorScheme.onSurfaceVariant),
                   ),
               ],
             ),
@@ -445,8 +423,7 @@ class _TableRow extends StatelessWidget {
             child: Text(
               '${detail.quantity}',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                  fontSize: 13, color: Color(0xFF475569)),
+              style: TextStyle(fontSize: 13, color: colorScheme.onSurface),
             ),
           ),
           SizedBox(
@@ -454,8 +431,7 @@ class _TableRow extends StatelessWidget {
             child: Text(
               '\$${detail.unitPrice}',
               textAlign: TextAlign.end,
-              style: const TextStyle(
-                  fontSize: 13, color: Color(0xFF475569)),
+              style: TextStyle(fontSize: 13, color: colorScheme.onSurface),
             ),
           ),
           SizedBox(
@@ -466,7 +442,7 @@ class _TableRow extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF0ea5c8),
+                color: AppColors.primary,
               ),
             ),
           ),

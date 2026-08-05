@@ -5,18 +5,23 @@ import '../../helpers/app_colors.dart';
 import '../app_numbers.dart';
 
 class AppTheme {
-  ThemeData getThemeData(BuildContext context) {
-    const colorScheme = AppColorScheme();
+  ThemeData getThemeData(BuildContext context) => _build(const AppColorScheme());
+
+  ThemeData getDarkThemeData(BuildContext context) =>
+      _build(const AppDarkColorScheme());
+
+  ThemeData _build(ColorScheme colorScheme) {
     final interText = GoogleFonts.inter().fontFamily;
+    final isDark = colorScheme.brightness == Brightness.dark;
 
     return ThemeData(
       useMaterial3: false,
       colorScheme: colorScheme,
-      primaryColor: colorScheme.primary,
-      scaffoldBackgroundColor: AppColors.surfaceLow,
+      primaryColor: AppColors.primary,
+      scaffoldBackgroundColor: colorScheme.surfaceContainerLowest,
       fontFamily: interText,
 
-      // AppBar
+      // AppBar — mismo azul marino de marca en ambos modos
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
@@ -49,7 +54,7 @@ class AppTheme {
       // Botones de texto
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primary,
+          foregroundColor: colorScheme.primary,
           textStyle: GoogleFonts.inter(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -60,15 +65,15 @@ class AppTheme {
       // Inputs
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surface,
+        fillColor: colorScheme.surface,
         contentPadding: kSpaceDeviceHVSm,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(kRadiusMd),
-          borderSide: const BorderSide(color: AppColors.outline),
+          borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(kRadiusMd),
-          borderSide: const BorderSide(color: AppColors.outline),
+          borderSide: BorderSide(color: colorScheme.outlineVariant),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(kRadiusMd),
@@ -78,30 +83,33 @@ class AppTheme {
           borderRadius: BorderRadius.circular(kRadiusMd),
           borderSide: const BorderSide(color: AppColors.error),
         ),
-        labelStyle: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 14),
-        hintStyle: const TextStyle(color: AppColors.gray, fontSize: 14),
+        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
+        hintStyle: TextStyle(
+          color: isDark ? AppColorsDark.onSurfaceVariant : AppColors.gray,
+          fontSize: 14,
+        ),
       ),
 
       // Cards
       cardTheme: CardThemeData(
         elevation: 0,
-        color: AppColors.surface,
+        color: colorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(kRadiusMd),
-          side: const BorderSide(color: AppColors.outline),
+          side: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
 
       // Divider
-      dividerTheme: const DividerThemeData(
-        color: AppColors.outline,
+      dividerTheme: DividerThemeData(
+        color: colorScheme.outlineVariant,
         thickness: 1,
         space: 1,
       ),
 
       // Chips
       chipTheme: ChipThemeData(
-        backgroundColor: AppColors.surfaceContainer,
+        backgroundColor: colorScheme.surfaceContainer,
         selectedColor: AppColors.primaryLight,
         labelStyle: const TextStyle(fontSize: 13),
         shape: RoundedRectangleBorder(

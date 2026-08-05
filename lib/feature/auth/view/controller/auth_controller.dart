@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../application/auth_usecase.dart';
@@ -34,5 +36,41 @@ class AuthController extends StateNotifier<AuthState> {
       (error) => state = const AuthState.initial(),
       (user) => state = AuthState.authenticated(user),
     );
+  }
+
+  /// Actualiza el perfil y refresca el estado en memoria de inmediato —
+  /// devuelve el mensaje de error, o null si se guardó correctamente.
+  Future<String?> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? email,
+    File? profilePicture,
+  }) async {
+    final result = await _useCase.updateProfile(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      profilePicture: profilePicture,
+    );
+    return result.fold(
+      (error) => error.message,
+      (user) {
+        state = AuthState.authenticated(user);
+        return null;
+      },
+    );
+  }
+
+  /// Cambia la contraseña del usuario autenticado — devuelve el mensaje de
+  /// error, o null si se actualizó correctamente.
+  Future<String?> changePassword({
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final result = await _useCase.changePassword(
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+    );
+    return result.fold((error) => error.message, (_) => null);
   }
 }

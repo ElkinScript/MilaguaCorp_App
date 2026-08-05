@@ -34,159 +34,104 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
     final state = ref.watch(newSaleControllerProvider);
     final ctrl = ref.read(newSaleControllerProvider.notifier);
 
-    // Mostrar SnackBar cuando aparece un error de submit.
+    // Toast de error cuando falla el submit de la venta.
     ref.listen<NewSaleState>(newSaleControllerProvider, (prev, next) {
       final err = next.mapOrNull(ready: (s) => s.submitError);
       if (err != null && err.isNotEmpty) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(err),
-              backgroundColor: const Color(0xFFef4444),
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 4),
-            ),
-          );
+        MgToast.error(context, err);
         ctrl.clearSubmitError();
       }
     });
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.92,
-      minChildSize: 0.5,
-      maxChildSize: 0.95,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFFf8fafc),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              const Gap(8),
-              // ── Drag handle ────────────────────────────────────────
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFcbd5e1),
-                  borderRadius: BorderRadius.circular(2),
+    return MgBottomSheet(
+      title: 'Nueva Venta',
+      scrollable: false,
+      showCloseButton: false,
+      initialHeightFactor: 0.92,
+      padding: EdgeInsets.zero,
+      childBuilder: (context, scrollController) {
+        return Column(
+          children: [
+            _StepIndicator(currentStep: _step),
+            Expanded(
+              child: state.when(
+                initial: () => const SizedBox(),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
                 ),
-              ),
-              const Gap(12),
-              // ── Cabecera ───────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Nueva Venta',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1e293b),
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0ea5c8).withOpacity(0.1),
-                          shape: BoxShape.circle,
+                error: (msg) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline,
+                            size: 48, color: AppColors.error),
+                        const Gap(16),
+                        Text(msg, textAlign: TextAlign.center),
+                        const Gap(16),
+                        MgBtn(
+                          label: 'Reintentar',
+                          onTap: () => ctrl.load(),
                         ),
-                        child: const Icon(Icons.close,
-                            size: 18, color: Color(0xFF0ea5c8)),
-                      ),
-                      onPressed: () => Navigator.pop(context, false),
-                    ),
-                  ],
-                ),
-              ),
-              _StepIndicator(currentStep: _step),
-              const Divider(height: 1),
-              Expanded(
-                child: state.when(
-                  initial: () => const SizedBox(),
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(
-                        color: Color(0xFF0ea5c8)),
-                  ),
-                  error: (msg) => Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.error_outline,
-                              size: 48, color: Color(0xFFef4444)),
-                          const Gap(16),
-                          Text(msg, textAlign: TextAlign.center),
-                          const Gap(16),
-                          MgBtn(
-                            label: 'Reintentar',
-                            onTap: () => ctrl.load(),
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
-                  ready: (products, branches, cart, selectedBranch,
-                      paymentMethod, clientName, clientPhone, clientEmail,
-                      observation, hasContainer, submitting, success,
-                      submitError) {
-                    if (_step == 0) {
-                      return _ProductsStep(
-                        products: products,
-                        cart: cart,
-                        scrollController: scrollController,
-                        onAdd: (p) =>
-                            _showQuantityDialog(context, p, ctrl),
-                        onNext: () {
-                          if (cart.isNotEmpty) setState(() => _step = 1);
-                        },
-                        cartCount: cart.length,
-                        cartTotal: ctrl.total,
-                      );
-                    } else if (_step == 1) {
-                      return _CartStep(
-                        cart: cart,
-                        branches: branches,
-                        selectedBranch: selectedBranch,
-                        paymentMethod: paymentMethod,
-                        clientName: clientName,
-                        clientPhone: clientPhone,
-                        clientEmail: clientEmail,
-                        observation: observation,
-                        hasContainer: hasContainer,
-                        scrollController: scrollController,
-                        ctrl: ctrl,
-                        total: ctrl.total,
-                        onBack: () => setState(() => _step = 0),
-                        onNext: () => setState(() => _step = 2),
-                      );
-                    } else {
-                      return _ConfirmStep(
-                        cart: cart,
-                        total: ctrl.total,
-                        clientName: clientName,
-                        paymentMethod: paymentMethod,
-                        submitting: submitting,
-                        onBack: () => setState(() => _step = 1),
-                        onConfirm: () async {
-                          final ok = await ctrl.submitSale();
-                          if (ok && context.mounted) {
-                            Navigator.pop(context, true);
-                          }
-                        },
-                      );
-                    }
-                  },
                 ),
+                ready: (products, branches, cart, selectedBranch,
+                    paymentMethod, clientName, clientPhone, clientEmail,
+                    observation, hasContainer, submitting, success,
+                    submitError) {
+                  if (_step == 0) {
+                    return _ProductsStep(
+                      products: products,
+                      cart: cart,
+                      scrollController: scrollController,
+                      onAdd: (p) => _showQuantityDialog(context, p, ctrl),
+                      onNext: () {
+                        if (cart.isNotEmpty) setState(() => _step = 1);
+                      },
+                      cartCount: cart.length,
+                      cartTotal: ctrl.total,
+                    );
+                  } else if (_step == 1) {
+                    return _CartStep(
+                      cart: cart,
+                      branches: branches,
+                      selectedBranch: selectedBranch,
+                      paymentMethod: paymentMethod,
+                      clientName: clientName,
+                      clientPhone: clientPhone,
+                      clientEmail: clientEmail,
+                      observation: observation,
+                      hasContainer: hasContainer,
+                      scrollController: scrollController,
+                      ctrl: ctrl,
+                      total: ctrl.total,
+                      onBack: () => setState(() => _step = 0),
+                      onNext: () => setState(() => _step = 2),
+                    );
+                  } else {
+                    return _ConfirmStep(
+                      cart: cart,
+                      total: ctrl.total,
+                      clientName: clientName,
+                      paymentMethod: paymentMethod,
+                      submitting: submitting,
+                      onBack: () => setState(() => _step = 1),
+                      onConfirm: () async {
+                        final ok = await ctrl.submitSale();
+                        if (ok && context.mounted) {
+                          MgToast.success(context, 'Venta registrada correctamente');
+                          Navigator.pop(context, true);
+                        }
+                      },
+                    );
+                  }
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
@@ -212,7 +157,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
               Text(
                 'Precio: \$${product.activePrice ?? "—"}',
                 style: const TextStyle(
-                    color: Color(0xFF0ea5c8),
+                    color: AppColors.primary,
                     fontWeight: FontWeight.w600),
               ),
               const Gap(16),
@@ -224,7 +169,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
                       if (qty > 1) setS(() => qty--);
                     },
                     icon: const Icon(Icons.remove_circle_outline,
-                        color: Color(0xFF0ea5c8)),
+                        color: AppColors.primary),
                   ),
                   Text(
                     '$qty',
@@ -238,7 +183,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
                       }
                     },
                     icon: const Icon(Icons.add_circle_outline,
-                        color: Color(0xFF0ea5c8)),
+                        color: AppColors.primary),
                   ),
                 ],
               ),
@@ -279,6 +224,7 @@ class _StepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final steps = ['Productos', 'Detalle', 'Confirmar'];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -293,8 +239,8 @@ class _StepIndicator extends StatelessWidget {
                     child: Container(
                       height: 2,
                       color: active
-                          ? const Color(0xFF0ea5c8)
-                          : const Color(0xFFe2e8f0),
+                          ? AppColors.primary
+                          : colorScheme.outlineVariant,
                     ),
                   ),
                 Container(
@@ -302,8 +248,8 @@ class _StepIndicator extends StatelessWidget {
                   height: 28,
                   decoration: BoxDecoration(
                     color: active
-                        ? const Color(0xFF0ea5c8)
-                        : const Color(0xFFe2e8f0),
+                        ? AppColors.primary
+                        : colorScheme.outlineVariant,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -312,7 +258,7 @@ class _StepIndicator extends StatelessWidget {
                       style: TextStyle(
                         color: active
                             ? Colors.white
-                            : const Color(0xFF94a3b8),
+                            : colorScheme.onSurfaceVariant,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -372,11 +318,11 @@ class _ProductsStep extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFb3e8f5),
+                      color: AppColors.primaryLight,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(Icons.water_drop,
-                        color: Color(0xFF0ea5c8), size: 20),
+                        color: AppColors.primary, size: 20),
                   ),
                   title: Text(
                     p.name,
@@ -385,8 +331,9 @@ class _ProductsStep extends StatelessWidget {
                   ),
                   subtitle: Text(
                     p.productType?.name ?? '',
-                    style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF64748b)),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -397,16 +344,18 @@ class _ProductsStep extends StatelessWidget {
                           Text(
                             '\$${p.activePrice ?? "—"}',
                             style: const TextStyle(
-                              color: Color(0xFF0ea5c8),
+                              color: AppColors.primary,
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
                           ),
                           Text(
                             'Stock: ${p.stockQuantity}',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 11,
-                                color: Color(0xFF94a3b8)),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -418,7 +367,7 @@ class _ProductsStep extends StatelessWidget {
                               : Icons.add_circle_outline,
                           color: inCart
                               ? const Color(0xFF22c55e)
-                              : const Color(0xFF0ea5c8),
+                              : AppColors.primary,
                         ),
                         onPressed: () => onAdd(p),
                       ),
@@ -507,19 +456,20 @@ class _CartStepState extends ConsumerState<_CartStep> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final dropBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Color(0xFFe2e8f0)),
+      borderSide: BorderSide(color: colorScheme.outlineVariant),
     );
     final dropDecoration = InputDecoration(
       filled: true,
-      fillColor: Colors.white,
+      fillColor: colorScheme.surface,
       border: dropBorder,
       enabledBorder: dropBorder,
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide:
-            const BorderSide(color: Color(0xFF0ea5c8), width: 1.5),
+            const BorderSide(color: AppColors.primary, width: 1.5),
       ),
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -554,9 +504,9 @@ class _CartStepState extends ConsumerState<_CartStep> {
                                 ),
                                 Text(
                                   '\$${item.unitPrice} c/u',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12,
-                                      color: Color(0xFF64748b)),
+                                      color: colorScheme.onSurfaceVariant),
                                 ),
                               ],
                             ),
@@ -586,7 +536,7 @@ class _CartStepState extends ConsumerState<_CartStep> {
                               Text(
                                 '\$${item.subtotalFormatted}',
                                 style: const TextStyle(
-                                  color: Color(0xFF0ea5c8),
+                                  color: AppColors.primary,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -645,19 +595,19 @@ class _CartStepState extends ConsumerState<_CartStep> {
               Container(
                 decoration: BoxDecoration(
                   color: widget.hasContainer
-                      ? const Color(0xFFe0f2fe)
+                      ? AppColors.primarySubtle
                       : const Color(0xFFfef3c7),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: widget.hasContainer
-                        ? const Color(0xFF0ea5c8)
+                        ? AppColors.primary
                         : const Color(0xFFf59e0b),
                     width: 1.2,
                   ),
                 ),
                 child: SwitchListTile(
                   value: widget.hasContainer,
-                  activeColor: const Color(0xFF0ea5c8),
+                  activeColor: AppColors.primary,
                   inactiveThumbColor: const Color(0xFFf59e0b),
                   inactiveTrackColor: const Color(0xFFfde68a),
                   onChanged: widget.ctrl.setHasContainer,
@@ -680,8 +630,8 @@ class _CartStepState extends ConsumerState<_CartStep> {
                     style: TextStyle(
                       fontSize: 12,
                       color: widget.hasContainer
-                          ? const Color(0xFF0ea5c8)
-                          : const Color(0xFFf59e0b),
+                          ? AppColors.primary
+                          : const Color(0xFF92400e),
                     ),
                   ),
                 ),
@@ -733,9 +683,9 @@ class _CartStepState extends ConsumerState<_CartStep> {
         // ── Botones navegación ─────────────────────────────────────
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(top: BorderSide(color: Color(0xFFe2e8f0))),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
           ),
           child: Row(
             children: [
@@ -795,7 +745,7 @@ class _ConfirmStep extends StatelessWidget {
             children: [
               const Center(
                 child: Icon(Icons.shopping_cart_checkout,
-                    size: 64, color: Color(0xFF0ea5c8)),
+                    size: 64, color: AppColors.primary),
               ),
               const Gap(16),
               const Center(
@@ -820,11 +770,12 @@ class _ConfirmStep extends StatelessWidget {
                       : 'Sin cliente'),
               _InfoRow(label: 'Pago', value: paymentMethod),
               const Gap(24),
-              const Text(
+              Text(
                 'Al confirmar, se registrará la venta y se descontará el stock automáticamente.',
                 textAlign: TextAlign.center,
-                style:
-                    TextStyle(fontSize: 13, color: Color(0xFF64748b)),
+                style: TextStyle(
+                    fontSize: 13,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ],
           ),
@@ -887,22 +838,20 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: const TextStyle(
-                  color: Color(0xFF64748b), fontSize: 14)),
+              style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14)),
           Text(
             value,
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: highlight ? 18 : 14,
-              color: highlight
-                  ? const Color(0xFF0ea5c8)
-                  : const Color(0xFF1e293b),
+              color: highlight ? AppColors.primary : colorScheme.onSurface,
             ),
           ),
         ],

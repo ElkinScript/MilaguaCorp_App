@@ -5,12 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../auth/domain/user_model.dart';
 import '../../../auth/view/controller/auth_controller.dart';
+import '../../../auth/view/widget/edit_profile_bottom_sheet.dart';
 import '../../../new_sale/view/widget/new_sale_bottom_sheet.dart';
+import '../../../product/view/controller/product_controller.dart';
 import '../../../product/view/widget/product_screen.dart';
+import '../../../report/view/controller/report_controller.dart';
 import '../../../report/view/widget/report_screen.dart';
 import '../../../sale/view/controller/sale_controller.dart';
 import '../../../sale/view/widget/sale_screen.dart';
 import '../controller/dashboard_controller.dart';
+import '../../../../core/helpers/app_colors.dart';
+import '../../../../core/theme/theme_mode_controller.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   static const routeName = '/home';
@@ -42,6 +47,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  void _reloadCurrentTab() {
+    switch (_currentIndex) {
+      case 0:
+        ref.read(dashboardControllerProvider.notifier).load();
+        break;
+      case 1:
+        ref.read(saleControllerProvider.notifier).load();
+        break;
+      case 2:
+        ref.read(productControllerProvider.notifier).load();
+        break;
+      case 3:
+        ref.read(reportControllerProvider.notifier).load();
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
@@ -49,33 +71,80 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0ea5c8),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+        titleSpacing: 16,
+        toolbarHeight: 78,
+        title: Row(
           children: [
-            Text(
-              userInfo?.displayName ?? 'Milagua Corp',
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
+            GestureDetector(
+              onTap: () => EditProfileBottomSheet.show(context),
+              child: CircleAvatar(
+                radius: 28,
+                backgroundColor: Colors.white.withValues(alpha: 0.18),
+                backgroundImage: (userInfo?.profilePicture ?? '').isNotEmpty
+                    ? NetworkImage(userInfo!.profilePicture!)
+                    : null,
+                child: (userInfo?.profilePicture ?? '').isEmpty
+                    ? Text(
+                        userInfo?.initials ?? '?',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      )
+                    : null,
               ),
             ),
-            if ((userInfo?.branchName ?? '').isNotEmpty)
-              Text(
-                userInfo!.branchName,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFFbae6fd),
-                  fontWeight: FontWeight.w400,
-                ),
+            const Gap(12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    userInfo?.displayName ?? 'Milagua Corp',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
+                  if ((userInfo?.groupName.isNotEmpty ?? false) ||
+                      (userInfo?.username.isNotEmpty ?? false)) ...[
+                    const Gap(5),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        if (userInfo?.groupName.isNotEmpty ?? false)
+                          _HeaderChip(
+                            label: userInfo!.groupName,
+                            icon: Icons.shield_outlined,
+                          ),
+                        if (userInfo?.username.isNotEmpty ?? false)
+                          _HeaderChip(
+                            label: userInfo!.username,
+                            icon: Icons.badge_outlined,
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
               ),
+            ),
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            tooltip: 'Recargar',
+            onPressed: _reloadCurrentTab,
+          ),
+          const _ThemeModeToggle(),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             tooltip: 'Cerrar sesión',
@@ -93,14 +162,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: _tabs,
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF0ea5c8),
+        backgroundColor: AppColors.primary,
         elevation: 4,
         onPressed: _openNewSale,
         child: const Icon(Icons.shopping_cart, color: Colors.white, size: 26),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         shape: const CircularNotchedRectangle(),
         notchMargin: 6,
         child: SizedBox(
@@ -148,6 +217,64 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
+// ════════════════════════════════════════════════════════════════════
+// Selector de tema — un solo ícono, alterna claro/oscuro
+// ════════════════════════════════════════════════════════════════════
+
+class _ThemeModeToggle extends ConsumerWidget {
+  const _ThemeModeToggle();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(themeModeControllerProvider);
+    final (icon, tooltip) = switch (mode) {
+      ThemeMode.light => (Icons.light_mode, 'Claro — toca para oscuro'),
+      ThemeMode.dark => (Icons.dark_mode, 'Oscuro — toca para automático'),
+      ThemeMode.system => (Icons.brightness_auto, 'Automático (sistema) — toca para claro'),
+    };
+    return IconButton(
+      icon: Icon(icon, color: Colors.white),
+      tooltip: tooltip,
+      onPressed: () => ref.read(themeModeControllerProvider.notifier).cycle(),
+    );
+  }
+}
+
+class _HeaderChip extends StatelessWidget {
+  const _HeaderChip({required this.label, this.icon});
+
+  final String label;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 12, color: Colors.white),
+            const Gap(4),
+          ],
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.icon,
@@ -165,8 +292,8 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primary = Color(0xFF0ea5c8);
-    const muted = Color(0xFF94a3b8);
+    const primary = AppColors.primary;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -205,11 +332,11 @@ class _DashboardTab extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(dashboardControllerProvider.notifier).load(),
-      color: const Color(0xFF0ea5c8),
+      color: AppColors.primary,
       child: state.when(
         initial: () => const SizedBox.shrink(),
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF0ea5c8)),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (msg) => Center(
           child: Padding(
@@ -222,7 +349,8 @@ class _DashboardTab extends ConsumerWidget {
                 const Gap(16),
                 Text(msg,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Color(0xFF64748b))),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 const Gap(16),
                 ElevatedButton(
                   onPressed: () =>
@@ -241,7 +369,7 @@ class _DashboardTab extends ConsumerWidget {
               'Resumen del mes',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF1e293b),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
             const Gap(16),
@@ -257,7 +385,7 @@ class _DashboardTab extends ConsumerWidget {
                   label: 'Ventas del mes',
                   value: data.month.count.toString(),
                   icon: Icons.shopping_cart,
-                  color: const Color(0xFF0ea5c8),
+                  color: AppColors.primary,
                 ),
                 _SummaryCard(
                   label: 'Total del mes',
@@ -285,7 +413,7 @@ class _DashboardTab extends ConsumerWidget {
                 'Ventas recientes',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1e293b),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
               const Gap(12),
@@ -295,23 +423,27 @@ class _DashboardTab extends ConsumerWidget {
                   child: Card(
                     child: ListTile(
                       leading: const CircleAvatar(
-                        backgroundColor: Color(0xFFb3e8f5),
+                        backgroundColor: AppColors.primaryLight,
                         child:
-                            Icon(Icons.receipt, color: Color(0xFF0ea5c8)),
+                            Icon(Icons.receipt, color: AppColors.primary),
                       ),
                       title: Text(
                           s.client.isNotEmpty ? s.client : 'Sin cliente',
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.onSurface)),
                       subtitle: Text(s.saleDate,
-                          style: const TextStyle(
-                              fontSize: 12, color: Color(0xFF94a3b8))),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  Theme.of(context).colorScheme.onSurfaceVariant)),
                       trailing: Text(
                         '\$${s.total.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF0ea5c8),
+                          color: AppColors.primary,
                         ),
                       ),
                     ),
@@ -363,9 +495,9 @@ class _SummaryCard extends StatelessWidget {
                 ),
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: Color(0xFF64748b),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],

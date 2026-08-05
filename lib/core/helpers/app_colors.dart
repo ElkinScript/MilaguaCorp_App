@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Primario (azul Milagua)
-  static const Color primary       = Color(0xFF0ea5c8);
-  static const Color primaryDark   = Color(0xFF0b8aa8);
-  static const Color primaryLight  = Color(0xFFb3e8f5);
-  static const Color primarySubtle = Color(0xFFe0f2fe);
+  // Primario (azul marino Milagua)
+  static const Color primary       = Color(0xFF1B3A5C);
+  static const Color primaryDark   = Color(0xFF102A43);
+  static const Color primaryLight  = Color(0xFFB9C9DC);
+  static const Color primarySubtle = Color(0xFFEEF1F6);
 
   // Superficie
   static const Color surface              = Colors.white;
@@ -21,7 +21,7 @@ class AppColors {
 
   // Borde
   static const Color outline        = Color(0xFFe2e8f0);
-  static const Color outlineFocus   = Color(0xFF0ea5c8);
+  static const Color outlineFocus   = Color(0xFF1B3A5C);
 
   // Estado
   static const Color success = Color(0xFF22c55e);
@@ -66,6 +66,45 @@ class AppColorScheme extends ColorScheme {
           outlineVariant: AppColors.outline,
           inverseSurface: AppColors.onSurface,
           onInverseSurface: AppColors.surfaceLow,
+          scrim: Colors.black,
+          shadow: Colors.black,
+        );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Paleta oscura — mismo azul marino de marca, superficies invertidas
+// ─────────────────────────────────────────────────────────────────────────────
+class AppColorsDark {
+  AppColorsDark._();
+
+  static const Color surface            = Color(0xFF1B232C);
+  static const Color surfaceLow          = Color(0xFF10151A);
+  static const Color surfaceContainer    = Color(0xFF232D38);
+  static const Color onSurface           = Color(0xFFE7ECF2);
+  static const Color onSurfaceVariant    = Color(0xFF9AA7B4);
+  static const Color outline             = Color(0xFF2E3A46);
+}
+
+class AppDarkColorScheme extends ColorScheme {
+  const AppDarkColorScheme()
+      : super(
+          brightness: Brightness.dark,
+          primary: AppColors.primaryLight,
+          onPrimary: AppColors.primaryDark,
+          secondary: AppColors.primaryLight,
+          onSecondary: AppColors.primaryDark,
+          error: AppColors.error,
+          onError: Colors.white,
+          surface: AppColorsDark.surface,
+          onSurface: AppColorsDark.onSurface,
+          onSurfaceVariant: AppColorsDark.onSurfaceVariant,
+          surfaceContainerLowest: AppColorsDark.surfaceLow,
+          surfaceContainerLow: AppColorsDark.surfaceContainer,
+          surfaceContainer: AppColorsDark.outline,
+          outline: AppColorsDark.outline,
+          outlineVariant: AppColorsDark.outline,
+          inverseSurface: AppColorsDark.onSurface,
+          onInverseSurface: AppColorsDark.surfaceLow,
           scrim: Colors.black,
           shadow: Colors.black,
         );

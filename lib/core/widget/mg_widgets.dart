@@ -4,6 +4,7 @@
 
 // Widgets
 export 'alerts/mg_alert.dart';
+export 'alerts/mg_toast.dart';
 export 'bottom_sheet/mg_bottom_sheet.dart';
 export 'buttons/mg_btn.dart';
 export 'input/mg_input.dart';

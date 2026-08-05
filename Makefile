@@ -13,8 +13,8 @@
 SHELL   := C:/Program Files/Git/bin/bash.exe
 .SHELLFLAGS := -c
 
-FLUTTER := C:/Users/ELKIN_MOYON/fvm/versions/3.35.0/bin/flutter.bat
-ADB     := adb
+FLUTTER ?= flutter
+ADB     ?= adb
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Codegen — env.g.dart + freezed

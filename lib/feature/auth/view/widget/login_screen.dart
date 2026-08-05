@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 
 import '../controller/auth_controller.dart';
 import '../state/auth_state.dart';
 
+import '../../../../core/helpers/app_colors.dart';
 class LoginScreen extends ConsumerStatefulWidget {
   static const routeName = '/login';
 
@@ -57,7 +59,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFf8fafc),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -71,26 +72,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   // Logo area
                   Column(
                     children: [
-                      Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0ea5c8),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Icon(
-                          Icons.water_drop,
-                          color: Colors.white,
-                          size: 48,
+                      SizedBox(
+                        height: (MediaQuery.sizeOf(context).height * 0.32)
+                            .clamp(220, 420),
+                        child: Lottie.asset(
+                          'assets/lottie/girl_watering_plants.json',
+                          repeat: true,
+                          fit: BoxFit.contain,
                         ),
                       ),
-                      const Gap(16),
+                      const Gap(8),
                       const Text(
                         'Milagua Corp',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF0ea5c8),
+                          color: AppColors.primary,
                         ),
                       ),
                       const Gap(8),
@@ -98,7 +95,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         'Inicia sesión para continuar',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],

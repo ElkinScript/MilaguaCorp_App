@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -46,9 +48,35 @@ class AuthUseCase {
   Future<Either<ServerException, UserModel>> checkAuth() async {
     final token = await _storage.getItem(AppStrings.keyTokenAccess);
     if (token == null) {
-      return Left(const ServerException('No token found'));
+      return Left(const ServerException('No se encontró una sesión activa.'));
     }
     return _repo.getProfile();
+  }
+
+  Future<Either<ServerException, UserModel>> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? email,
+    File? profilePicture,
+  }) async {
+    final result = await _repo.updateProfile(
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      profilePicture: profilePicture,
+    );
+    if (result.isRight) await _saveProfile(result.right);
+    return result;
+  }
+
+  Future<Either<ServerException, String>> changePassword({
+    required String newPassword,
+    required String confirmPassword,
+  }) {
+    return _repo.changePassword(
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+    );
   }
 
   Future<void> _saveProfile(UserModel user) async {
