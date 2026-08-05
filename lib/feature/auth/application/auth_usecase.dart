@@ -70,12 +70,10 @@ class AuthUseCase {
   }
 
   Future<Either<ServerException, String>> changePassword({
-    required String currentPassword,
     required String newPassword,
     required String confirmPassword,
   }) {
     return _repo.changePassword(
-      currentPassword: currentPassword,
       newPassword: newPassword,
       confirmPassword: confirmPassword,
     );

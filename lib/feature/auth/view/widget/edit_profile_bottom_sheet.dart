@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:gap/gap.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,14 +32,12 @@ class _EditProfileBottomSheetState
   late final TextEditingController _firstNameCtrl;
   late final TextEditingController _lastNameCtrl;
   late final TextEditingController _emailCtrl;
-  final _currentPasswordCtrl = TextEditingController();
   final _newPasswordCtrl = TextEditingController();
   final _confirmPasswordCtrl = TextEditingController();
   File? _pickedImage;
   bool _saving = false;
   bool _savingPassword = false;
   bool _showPasswordSection = false;
-  bool _obscureCurrent = true;
   bool _obscureNew = true;
   bool _obscureConfirm = true;
 
@@ -60,17 +59,29 @@ class _EditProfileBottomSheetState
     _firstNameCtrl.dispose();
     _lastNameCtrl.dispose();
     _emailCtrl.dispose();
-    _currentPasswordCtrl.dispose();
     _newPasswordCtrl.dispose();
     _confirmPasswordCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _pickImage() async {
-    final picked = await ImagePicker()
-        .pickImage(source: ImageSource.gallery, imageQuality: 85);
-    if (picked != null) {
-      setState(() => _pickedImage = File(picked.path));
+    try {
+      final picked = await ImagePicker()
+          .pickImage(source: ImageSource.gallery, imageQuality: 85);
+      if (picked != null) {
+        setState(() => _pickedImage = File(picked.path));
+      }
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+      MgToast.error(
+        context,
+        e.code == 'photo_access_denied'
+            ? 'No tienes permiso para acceder a tus fotos. Actívalo en Ajustes.'
+            : 'No se pudo abrir la galería: ${e.message ?? e.code}',
+      );
+    } catch (e) {
+      if (!mounted) return;
+      MgToast.error(context, 'No se pudo abrir la galería. Intenta de nuevo.');
     }
   }
 
@@ -94,11 +105,10 @@ class _EditProfileBottomSheetState
   }
 
   Future<void> _savePassword() async {
-    final current = _currentPasswordCtrl.text;
     final next = _newPasswordCtrl.text;
     final confirm = _confirmPasswordCtrl.text;
-    if (current.isEmpty || next.isEmpty || confirm.isEmpty) {
-      MgToast.warning(context, 'Completa los 3 campos de contraseña');
+    if (next.isEmpty || confirm.isEmpty) {
+      MgToast.warning(context, 'Completa los 2 campos de contraseña');
       return;
     }
     if (next != confirm) {
@@ -111,7 +121,6 @@ class _EditProfileBottomSheetState
     setState(() => _savingPassword = true);
     final error =
         await ref.read(authControllerProvider.notifier).changePassword(
-              currentPassword: current,
               newPassword: next,
               confirmPassword: confirm,
             );
@@ -121,7 +130,6 @@ class _EditProfileBottomSheetState
       MgToast.error(context, error);
     } else {
       MgToast.success(context, 'Contraseña actualizada correctamente');
-      _currentPasswordCtrl.clear();
       _newPasswordCtrl.clear();
       _confirmPasswordCtrl.clear();
       setState(() => _showPasswordSection = false);
@@ -250,21 +258,6 @@ class _EditProfileBottomSheetState
             ),
             if (_showPasswordSection) ...[
               const Gap(4),
-              MgInput(
-                controller: _currentPasswordCtrl,
-                label: 'Contraseña actual',
-                prefixIcon: Icons.lock_outline,
-                obscureText: _obscureCurrent,
-                textInputAction: TextInputAction.next,
-                suffixIcon: IconButton(
-                  icon: Icon(_obscureCurrent
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined),
-                  onPressed: () =>
-                      setState(() => _obscureCurrent = !_obscureCurrent),
-                ),
-              ),
-              const Gap(12),
               MgInput(
                 controller: _newPasswordCtrl,
                 label: 'Nueva contraseña',

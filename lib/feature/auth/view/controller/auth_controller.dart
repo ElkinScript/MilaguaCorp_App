@@ -64,12 +64,10 @@ class AuthController extends StateNotifier<AuthState> {
   /// Cambia la contraseña del usuario autenticado — devuelve el mensaje de
   /// error, o null si se actualizó correctamente.
   Future<String?> changePassword({
-    required String currentPassword,
     required String newPassword,
     required String confirmPassword,
   }) async {
     final result = await _useCase.changePassword(
-      currentPassword: currentPassword,
       newPassword: newPassword,
       confirmPassword: confirmPassword,
     );

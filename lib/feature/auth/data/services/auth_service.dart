@@ -78,13 +78,11 @@ class AuthService implements AuthInterface {
 
   @override
   Future<String> changePassword({
-    required String currentPassword,
     required String newPassword,
     required String confirmPassword,
   }) async {
     const url = '/api/auth/change-password/';
     final body = {
-      'current_password': currentPassword,
       'new_password': newPassword,
       'confirm_password': confirmPassword,
     };

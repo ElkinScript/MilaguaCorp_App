@@ -14,7 +14,6 @@ abstract class AuthInterface {
     File? profilePicture,
   });
   Future<String> changePassword({
-    required String currentPassword,
     required String newPassword,
     required String confirmPassword,
   });
