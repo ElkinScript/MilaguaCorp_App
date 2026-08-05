@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/flavors/flavors_config.dart';
+import '../core/theme/device_preview_brightness_storage.dart';
 import '../modules/app_widget.dart';
 
 Future<void> commonMain({
@@ -20,12 +21,18 @@ Future<void> commonMain({
   await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
   runApp(
     DevicePreview(
-      // OJO: el panel de DevicePreview tiene su PROPIO switch claro/oscuro
-      // (sección "System"), separado del tema real del dispositivo — no
-      // sigue "sistema", solo simula Light/Dark según lo que elijas ahí.
-      // Si algún día el tema se ve "atascado" en claro sin razón, revisa
-      // primero ese switch antes de sospechar del ThemeModeController.
+      // El panel de DevicePreview tiene su PROPIO switch claro/oscuro
+      // (sección "System"), separado del brillo real del dispositivo.
+      // RealBrightnessDevicePreviewStorage lo sincroniza con el brillo real
+      // del sistema en cada arranque, para que ThemeMode.system coincida
+      // con el dispositivo desde el primer frame. Si se cambia el switch a
+      // mano dentro del panel durante la sesión, ese valor manda hasta el
+      // próximo arranque (no hay re-sync en vivo si el sistema cambia de
+      // tema en caliente con la app abierta).
       enabled: !kReleaseMode,
+      storage: RealBrightnessDevicePreviewStorage(
+        DevicePreviewStorage.preferences(),
+      ),
       builder: (context) => const ProviderScope(child: AppWidget()),
     ),
   );

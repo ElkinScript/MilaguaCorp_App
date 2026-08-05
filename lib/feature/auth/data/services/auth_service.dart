@@ -75,4 +75,24 @@ class AuthService implements AuthInterface {
     final data = response.data as Map<String, dynamic>;
     return UserModel.fromJson(data['user'] as Map<String, dynamic>);
   }
+
+  @override
+  Future<String> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    const url = '/api/auth/change-password/';
+    final body = {
+      'current_password': currentPassword,
+      'new_password': newPassword,
+      'confirm_password': confirmPassword,
+    };
+    DebugLogger(runtimeType).request(url);
+    final response = await _http().post(url, data: body);
+    DebugLogger(runtimeType)
+        .response(url, [response.statusCode, response.data]);
+    final data = response.data as Map<String, dynamic>;
+    return data['message'] as String? ?? 'Contraseña actualizada correctamente.';
+  }
 }

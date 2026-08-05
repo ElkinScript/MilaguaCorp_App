@@ -31,8 +31,16 @@ class _EditProfileBottomSheetState
   late final TextEditingController _firstNameCtrl;
   late final TextEditingController _lastNameCtrl;
   late final TextEditingController _emailCtrl;
+  final _currentPasswordCtrl = TextEditingController();
+  final _newPasswordCtrl = TextEditingController();
+  final _confirmPasswordCtrl = TextEditingController();
   File? _pickedImage;
   bool _saving = false;
+  bool _savingPassword = false;
+  bool _showPasswordSection = false;
+  bool _obscureCurrent = true;
+  bool _obscureNew = true;
+  bool _obscureConfirm = true;
 
   UserModel? get _currentUser => ref
       .read(authControllerProvider)
@@ -52,6 +60,9 @@ class _EditProfileBottomSheetState
     _firstNameCtrl.dispose();
     _lastNameCtrl.dispose();
     _emailCtrl.dispose();
+    _currentPasswordCtrl.dispose();
+    _newPasswordCtrl.dispose();
+    _confirmPasswordCtrl.dispose();
     super.dispose();
   }
 
@@ -79,6 +90,41 @@ class _EditProfileBottomSheetState
     } else {
       MgToast.success(context, 'Perfil actualizado correctamente');
       Navigator.pop(context);
+    }
+  }
+
+  Future<void> _savePassword() async {
+    final current = _currentPasswordCtrl.text;
+    final next = _newPasswordCtrl.text;
+    final confirm = _confirmPasswordCtrl.text;
+    if (current.isEmpty || next.isEmpty || confirm.isEmpty) {
+      MgToast.warning(context, 'Completa los 3 campos de contraseña');
+      return;
+    }
+    if (next != confirm) {
+      MgToast.warning(
+        context,
+        'La nueva contraseña y su confirmación no coinciden',
+      );
+      return;
+    }
+    setState(() => _savingPassword = true);
+    final error =
+        await ref.read(authControllerProvider.notifier).changePassword(
+              currentPassword: current,
+              newPassword: next,
+              confirmPassword: confirm,
+            );
+    if (!mounted) return;
+    setState(() => _savingPassword = false);
+    if (error != null) {
+      MgToast.error(context, error);
+    } else {
+      MgToast.success(context, 'Contraseña actualizada correctamente');
+      _currentPasswordCtrl.clear();
+      _newPasswordCtrl.clear();
+      _confirmPasswordCtrl.clear();
+      setState(() => _showPasswordSection = false);
     }
   }
 
@@ -170,6 +216,91 @@ class _EditProfileBottomSheetState
               isLoading: _saving,
               onTap: _saving ? null : _save,
             ),
+            const Gap(24),
+            Divider(color: colorScheme.outlineVariant),
+            InkWell(
+              onTap: () =>
+                  setState(() => _showPasswordSection = !_showPasswordSection),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: [
+                    Icon(Icons.lock_outline,
+                        size: 20, color: colorScheme.primary),
+                    const Gap(8),
+                    Expanded(
+                      child: Text(
+                        'Cambiar contraseña',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      _showPasswordSection
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            if (_showPasswordSection) ...[
+              const Gap(4),
+              MgInput(
+                controller: _currentPasswordCtrl,
+                label: 'Contraseña actual',
+                prefixIcon: Icons.lock_outline,
+                obscureText: _obscureCurrent,
+                textInputAction: TextInputAction.next,
+                suffixIcon: IconButton(
+                  icon: Icon(_obscureCurrent
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined),
+                  onPressed: () =>
+                      setState(() => _obscureCurrent = !_obscureCurrent),
+                ),
+              ),
+              const Gap(12),
+              MgInput(
+                controller: _newPasswordCtrl,
+                label: 'Nueva contraseña',
+                prefixIcon: Icons.lock_reset_outlined,
+                obscureText: _obscureNew,
+                textInputAction: TextInputAction.next,
+                suffixIcon: IconButton(
+                  icon: Icon(_obscureNew
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined),
+                  onPressed: () => setState(() => _obscureNew = !_obscureNew),
+                ),
+              ),
+              const Gap(12),
+              MgInput(
+                controller: _confirmPasswordCtrl,
+                label: 'Confirmar nueva contraseña',
+                prefixIcon: Icons.lock_reset_outlined,
+                obscureText: _obscureConfirm,
+                textInputAction: TextInputAction.done,
+                suffixIcon: IconButton(
+                  icon: Icon(_obscureConfirm
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined),
+                  onPressed: () =>
+                      setState(() => _obscureConfirm = !_obscureConfirm),
+                ),
+              ),
+              const Gap(16),
+              MgBtn(
+                label: 'Actualizar contraseña',
+                isLoading: _savingPassword,
+                isOutline: true,
+                onTap: _savingPassword ? null : _savePassword,
+              ),
+            ],
             const Gap(8),
           ],
         );

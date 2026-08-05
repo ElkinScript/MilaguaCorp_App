@@ -69,6 +69,18 @@ class AuthUseCase {
     return result;
   }
 
+  Future<Either<ServerException, String>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) {
+    return _repo.changePassword(
+      currentPassword: currentPassword,
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+    );
+  }
+
   Future<void> _saveProfile(UserModel user) async {
     await _storage.setItem('mg_user_id', user.id.toString());
     await _storage.setItem('mg_username', user.username);

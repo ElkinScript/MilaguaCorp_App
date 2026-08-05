@@ -67,4 +67,21 @@ class AuthRepository {
       return Left(ServerException(parseError(e)));
     }
   }
+
+  Future<Either<ServerException, String>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      final result = await _service.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(ServerException(parseError(e)));
+    }
+  }
 }
