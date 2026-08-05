@@ -27,6 +27,19 @@ extension UserModelX on UserModel {
   String get displayName => fullName.isNotEmpty ? fullName : username;
   String get groupName => groups.isNotEmpty ? groups.first : '';
   String get branchName => employeeProfile?.branchName ?? '';
+
+  String get initials {
+    if (firstName.isNotEmpty && lastName.isNotEmpty) {
+      return '${firstName[0]}${lastName[0]}'.toUpperCase();
+    }
+    final parts = displayName.trim().split(RegExp(r'\s+'))
+      ..removeWhere((p) => p.isEmpty);
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) {
+      return parts.first.substring(0, parts.first.length >= 2 ? 2 : 1).toUpperCase();
+    }
+    return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+  }
 }
 
 @freezed

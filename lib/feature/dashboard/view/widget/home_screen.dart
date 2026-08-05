@@ -11,6 +11,7 @@ import '../../../report/view/widget/report_screen.dart';
 import '../../../sale/view/controller/sale_controller.dart';
 import '../../../sale/view/widget/sale_screen.dart';
 import '../controller/dashboard_controller.dart';
+import '../../../../core/helpers/app_colors.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   static const routeName = '/home';
@@ -49,30 +50,71 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0ea5c8),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+        titleSpacing: 12,
+        title: Row(
           children: [
-            Text(
-              userInfo?.displayName ?? 'Milagua Corp',
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
-            ),
-            if ((userInfo?.branchName ?? '').isNotEmpty)
-              Text(
-                userInfo!.branchName,
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: Colors.white.withValues(alpha: 0.18),
+              child: Text(
+                userInfo?.initials ?? '?',
                 style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFFbae6fd),
-                  fontWeight: FontWeight.w400,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
                 ),
               ),
+            ),
+            const Gap(10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    userInfo?.displayName ?? 'Milagua Corp',
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
+                  if ((userInfo?.email ?? '').isNotEmpty)
+                    Text(
+                      userInfo!.email,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.primaryLight,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  if (userInfo?.groupName.isNotEmpty ?? false) ...[
+                    const Gap(3),
+                    Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        userInfo!.groupName,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ],
         ),
         actions: [
@@ -93,7 +135,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: _tabs,
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF0ea5c8),
+        backgroundColor: AppColors.primary,
         elevation: 4,
         onPressed: _openNewSale,
         child: const Icon(Icons.shopping_cart, color: Colors.white, size: 26),
@@ -165,7 +207,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primary = Color(0xFF0ea5c8);
+    const primary = AppColors.primary;
     const muted = Color(0xFF94a3b8);
     return InkWell(
       onTap: onTap,
@@ -205,11 +247,11 @@ class _DashboardTab extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(dashboardControllerProvider.notifier).load(),
-      color: const Color(0xFF0ea5c8),
+      color: AppColors.primary,
       child: state.when(
         initial: () => const SizedBox.shrink(),
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF0ea5c8)),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (msg) => Center(
           child: Padding(
@@ -257,7 +299,7 @@ class _DashboardTab extends ConsumerWidget {
                   label: 'Ventas del mes',
                   value: data.month.count.toString(),
                   icon: Icons.shopping_cart,
-                  color: const Color(0xFF0ea5c8),
+                  color: AppColors.primary,
                 ),
                 _SummaryCard(
                   label: 'Total del mes',
@@ -295,9 +337,9 @@ class _DashboardTab extends ConsumerWidget {
                   child: Card(
                     child: ListTile(
                       leading: const CircleAvatar(
-                        backgroundColor: Color(0xFFb3e8f5),
+                        backgroundColor: AppColors.primaryLight,
                         child:
-                            Icon(Icons.receipt, color: Color(0xFF0ea5c8)),
+                            Icon(Icons.receipt, color: AppColors.primary),
                       ),
                       title: Text(
                           s.client.isNotEmpty ? s.client : 'Sin cliente',
@@ -311,7 +353,7 @@ class _DashboardTab extends ConsumerWidget {
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF0ea5c8),
+                          color: AppColors.primary,
                         ),
                       ),
                     ),

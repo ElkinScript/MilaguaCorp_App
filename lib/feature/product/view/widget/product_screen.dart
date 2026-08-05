@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import '../../domain/product_model.dart';
 import '../controller/product_controller.dart';
 
+import '../../../../core/helpers/app_colors.dart';
 class ProductScreen extends ConsumerWidget {
   static const routeName = '/products';
 
@@ -16,11 +17,11 @@ class ProductScreen extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(productControllerProvider.notifier).load(),
-      color: const Color(0xFF0ea5c8),
+      color: AppColors.primary,
       child: state.when(
         initial: () => const SizedBox.shrink(),
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF0ea5c8)),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (msg) => Center(
           child: Padding(
@@ -91,11 +92,11 @@ class _ProductCard extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: const Color(0xFFb3e8f5),
+                color: AppColors.primaryLight,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.water_drop,
-                  color: Color(0xFF0ea5c8), size: 24),
+                  color: AppColors.primary, size: 24),
             ),
             const Gap(12),
             Expanded(
@@ -131,7 +132,7 @@ class _ProductCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF0ea5c8),
+                    color: AppColors.primary,
                   ),
                 ),
                 const Gap(4),

@@ -7,6 +7,7 @@ import '../../../../feature/proforma/view/widget/proforma_screen.dart';
 import '../../domain/sale_model.dart';
 import '../controller/sale_controller.dart';
 
+import '../../../../core/helpers/app_colors.dart';
 class SaleScreen extends ConsumerWidget {
   static const routeName = '/sales';
 
@@ -18,11 +19,11 @@ class SaleScreen extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(saleControllerProvider.notifier).load(),
-      color: const Color(0xFF0ea5c8),
+      color: AppColors.primary,
       child: state.when(
         initial: () => const SizedBox.shrink(),
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF0ea5c8)),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (msg) => Center(
           child: Padding(
@@ -130,7 +131,7 @@ class _SaleCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF0ea5c8),
+                    color: AppColors.primary,
                   ),
                 ),
                 const Gap(4),
@@ -147,7 +148,7 @@ class _SaleCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        color: Color(0xFF0ea5c8),
+                        color: AppColors.primary,
                       ),
                     ),
                   ),

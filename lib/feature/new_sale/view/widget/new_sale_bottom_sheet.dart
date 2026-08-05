@@ -93,11 +93,11 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
                       icon: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0ea5c8).withOpacity(0.1),
+                          color: AppColors.primary.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(Icons.close,
-                            size: 18, color: Color(0xFF0ea5c8)),
+                            size: 18, color: AppColors.primary),
                       ),
                       onPressed: () => Navigator.pop(context, false),
                     ),
@@ -111,7 +111,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
                   initial: () => const SizedBox(),
                   loading: () => const Center(
                     child: CircularProgressIndicator(
-                        color: Color(0xFF0ea5c8)),
+                        color: AppColors.primary),
                   ),
                   error: (msg) => Center(
                     child: Padding(
@@ -212,7 +212,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
               Text(
                 'Precio: \$${product.activePrice ?? "—"}',
                 style: const TextStyle(
-                    color: Color(0xFF0ea5c8),
+                    color: AppColors.primary,
                     fontWeight: FontWeight.w600),
               ),
               const Gap(16),
@@ -224,7 +224,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
                       if (qty > 1) setS(() => qty--);
                     },
                     icon: const Icon(Icons.remove_circle_outline,
-                        color: Color(0xFF0ea5c8)),
+                        color: AppColors.primary),
                   ),
                   Text(
                     '$qty',
@@ -238,7 +238,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
                       }
                     },
                     icon: const Icon(Icons.add_circle_outline,
-                        color: Color(0xFF0ea5c8)),
+                        color: AppColors.primary),
                   ),
                 ],
               ),
@@ -293,7 +293,7 @@ class _StepIndicator extends StatelessWidget {
                     child: Container(
                       height: 2,
                       color: active
-                          ? const Color(0xFF0ea5c8)
+                          ? AppColors.primary
                           : const Color(0xFFe2e8f0),
                     ),
                   ),
@@ -302,7 +302,7 @@ class _StepIndicator extends StatelessWidget {
                   height: 28,
                   decoration: BoxDecoration(
                     color: active
-                        ? const Color(0xFF0ea5c8)
+                        ? AppColors.primary
                         : const Color(0xFFe2e8f0),
                     shape: BoxShape.circle,
                   ),
@@ -372,11 +372,11 @@ class _ProductsStep extends StatelessWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFb3e8f5),
+                      color: AppColors.primaryLight,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(Icons.water_drop,
-                        color: Color(0xFF0ea5c8), size: 20),
+                        color: AppColors.primary, size: 20),
                   ),
                   title: Text(
                     p.name,
@@ -397,7 +397,7 @@ class _ProductsStep extends StatelessWidget {
                           Text(
                             '\$${p.activePrice ?? "—"}',
                             style: const TextStyle(
-                              color: Color(0xFF0ea5c8),
+                              color: AppColors.primary,
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
                             ),
@@ -418,7 +418,7 @@ class _ProductsStep extends StatelessWidget {
                               : Icons.add_circle_outline,
                           color: inCart
                               ? const Color(0xFF22c55e)
-                              : const Color(0xFF0ea5c8),
+                              : AppColors.primary,
                         ),
                         onPressed: () => onAdd(p),
                       ),
@@ -519,7 +519,7 @@ class _CartStepState extends ConsumerState<_CartStep> {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide:
-            const BorderSide(color: Color(0xFF0ea5c8), width: 1.5),
+            const BorderSide(color: AppColors.primary, width: 1.5),
       ),
       contentPadding:
           const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -586,7 +586,7 @@ class _CartStepState extends ConsumerState<_CartStep> {
                               Text(
                                 '\$${item.subtotalFormatted}',
                                 style: const TextStyle(
-                                  color: Color(0xFF0ea5c8),
+                                  color: AppColors.primary,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -645,19 +645,19 @@ class _CartStepState extends ConsumerState<_CartStep> {
               Container(
                 decoration: BoxDecoration(
                   color: widget.hasContainer
-                      ? const Color(0xFFe0f2fe)
+                      ? AppColors.primarySubtle
                       : const Color(0xFFfef3c7),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: widget.hasContainer
-                        ? const Color(0xFF0ea5c8)
+                        ? AppColors.primary
                         : const Color(0xFFf59e0b),
                     width: 1.2,
                   ),
                 ),
                 child: SwitchListTile(
                   value: widget.hasContainer,
-                  activeColor: const Color(0xFF0ea5c8),
+                  activeColor: AppColors.primary,
                   inactiveThumbColor: const Color(0xFFf59e0b),
                   inactiveTrackColor: const Color(0xFFfde68a),
                   onChanged: widget.ctrl.setHasContainer,
@@ -680,7 +680,7 @@ class _CartStepState extends ConsumerState<_CartStep> {
                     style: TextStyle(
                       fontSize: 12,
                       color: widget.hasContainer
-                          ? const Color(0xFF0ea5c8)
+                          ? AppColors.primary
                           : const Color(0xFFf59e0b),
                     ),
                   ),
@@ -795,7 +795,7 @@ class _ConfirmStep extends StatelessWidget {
             children: [
               const Center(
                 child: Icon(Icons.shopping_cart_checkout,
-                    size: 64, color: Color(0xFF0ea5c8)),
+                    size: 64, color: AppColors.primary),
               ),
               const Gap(16),
               const Center(
@@ -901,7 +901,7 @@ class _InfoRow extends StatelessWidget {
               fontWeight: FontWeight.w700,
               fontSize: highlight ? 18 : 14,
               color: highlight
-                  ? const Color(0xFF0ea5c8)
+                  ? AppColors.primary
                   : const Color(0xFF1e293b),
             ),
           ),

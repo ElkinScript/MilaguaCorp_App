@@ -3,6 +3,7 @@ import 'package:gap/gap.dart';
 
 import '../../../sale/domain/sale_model.dart';
 
+import '../../../../core/helpers/app_colors.dart';
 class ProformaScreen extends StatelessWidget {
   static const routeName = '/proforma';
 
@@ -27,7 +28,7 @@ class ProformaScreen extends StatelessWidget {
           'Proforma #${sale.id}',
           style: const TextStyle(fontWeight: FontWeight.w700),
         ),
-        backgroundColor: const Color(0xFF0ea5c8),
+        backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
@@ -56,7 +57,7 @@ class ProformaScreen extends StatelessWidget {
                               width: 48,
                               height: 48,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF0ea5c8),
+                                color: AppColors.primary,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(Icons.water_drop,
@@ -68,7 +69,7 @@ class ProformaScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF0ea5c8),
+                                color: AppColors.primary,
                               ),
                             ),
                             const Text(
@@ -86,7 +87,7 @@ class ProformaScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF0ea5c8),
+                                color: AppColors.primary,
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Text(
@@ -238,7 +239,7 @@ class ProformaScreen extends StatelessWidget {
                             style: const TextStyle(
                               fontWeight: FontWeight.w800,
                               fontSize: 22,
-                              color: Color(0xFF0ea5c8),
+                              color: AppColors.primary,
                             ),
                           ),
                         ],
@@ -324,7 +325,7 @@ class _DetailRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF0ea5c8)),
+          Icon(icon, size: 16, color: AppColors.primary),
           const Gap(8),
           Text(
             '$label: ',
@@ -466,7 +467,7 @@ class _TableRow extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF0ea5c8),
+                color: AppColors.primary,
               ),
             ),
           ),

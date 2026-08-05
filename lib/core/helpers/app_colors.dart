@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Primario (azul Milagua)
-  static const Color primary       = Color(0xFF0ea5c8);
-  static const Color primaryDark   = Color(0xFF0b8aa8);
-  static const Color primaryLight  = Color(0xFFb3e8f5);
-  static const Color primarySubtle = Color(0xFFe0f2fe);
+  // Primario (azul marino Milagua)
+  static const Color primary       = Color(0xFF1B3A5C);
+  static const Color primaryDark   = Color(0xFF102A43);
+  static const Color primaryLight  = Color(0xFFB9C9DC);
+  static const Color primarySubtle = Color(0xFFEEF1F6);
 
   // Superficie
   static const Color surface              = Colors.white;
@@ -21,7 +21,7 @@ class AppColors {
 
   // Borde
   static const Color outline        = Color(0xFFe2e8f0);
-  static const Color outlineFocus   = Color(0xFF0ea5c8);
+  static const Color outlineFocus   = Color(0xFF1B3A5C);
 
   // Estado
   static const Color success = Color(0xFF22c55e);

@@ -5,6 +5,7 @@ import 'package:gap/gap.dart';
 import '../../domain/report_model.dart';
 import '../controller/report_controller.dart';
 
+import '../../../../core/helpers/app_colors.dart';
 class ReportScreen extends ConsumerWidget {
   static const routeName = '/reports';
 
@@ -16,11 +17,11 @@ class ReportScreen extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(reportControllerProvider.notifier).load(),
-      color: const Color(0xFF0ea5c8),
+      color: AppColors.primary,
       child: state.when(
         initial: () => const SizedBox.shrink(),
         loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF0ea5c8)),
+          child: CircularProgressIndicator(color: AppColors.primary),
         ),
         error: (msg) => Center(
           child: Padding(
@@ -70,7 +71,7 @@ class _ReportContent extends StatelessWidget {
                 label: 'Ventas',
                 value: data.month.count.toString(),
                 icon: Icons.shopping_cart,
-                color: const Color(0xFF0ea5c8),
+                color: AppColors.primary,
               ),
             ),
             const Gap(12),
@@ -177,7 +178,7 @@ class _ReportContent extends StatelessWidget {
                       '\$${p.revenue.toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF0ea5c8),
+                        color: AppColors.primary,
                         fontSize: 14,
                       ),
                     ),
@@ -200,8 +201,8 @@ class _ReportContent extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 8),
                 child: ListTile(
                   leading: const CircleAvatar(
-                    backgroundColor: Color(0xFFb3e8f5),
-                    child: Icon(Icons.receipt, color: Color(0xFF0ea5c8)),
+                    backgroundColor: AppColors.primaryLight,
+                    child: Icon(Icons.receipt, color: AppColors.primary),
                   ),
                   title: Text(
                     s.client.isNotEmpty ? s.client : 'Sin cliente',
@@ -222,7 +223,7 @@ class _ReportContent extends StatelessWidget {
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 14,
-                          color: Color(0xFF0ea5c8),
+                          color: AppColors.primary,
                         ),
                       ),
                       if (s.branch.isNotEmpty)
@@ -250,7 +251,7 @@ class _ReportContent extends StatelessWidget {
       case 2:
         return const Color(0xFFb45309);
       default:
-        return const Color(0xFF0ea5c8);
+        return AppColors.primary;
     }
   }
 }
@@ -330,7 +331,7 @@ class _TicketCard extends StatelessWidget {
         child: Row(
           children: [
             const Icon(Icons.confirmation_number_outlined,
-                color: Color(0xFF0ea5c8), size: 28),
+                color: AppColors.primary, size: 28),
             const Gap(12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -344,7 +345,7 @@ class _TicketCard extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: Color(0xFF0ea5c8),
+                    color: AppColors.primary,
                   ),
                 ),
               ],

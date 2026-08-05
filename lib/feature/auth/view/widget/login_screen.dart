@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../controller/auth_controller.dart';
 import '../state/auth_state.dart';
 
+import '../../../../core/helpers/app_colors.dart';
 class LoginScreen extends ConsumerStatefulWidget {
   static const routeName = '/login';
 
@@ -75,7 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         width: 80,
                         height: 80,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0ea5c8),
+                          color: AppColors.primary,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Icon(
@@ -90,7 +91,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF0ea5c8),
+                          color: AppColors.primary,
                         ),
                       ),
                       const Gap(8),
