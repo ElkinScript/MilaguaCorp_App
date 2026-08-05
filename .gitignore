@@ -50,3 +50,7 @@ app.*.map.json
 
 # Envied generated (contiene valores ofuscados, no subir)
 lib/core/env/env.g.dart
+
+# Freezed / json_serializable generado — se regenera con build_runner, no subir
+**/*.freezed.dart
+**/*.g.dart
