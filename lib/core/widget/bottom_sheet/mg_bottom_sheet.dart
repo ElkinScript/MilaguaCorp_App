@@ -4,10 +4,12 @@ import 'package:gap/gap.dart';
 import '../../constants/app_numbers.dart';
 import '../../helpers/app_colors.dart';
 
-/// Bottom sheet base reutilizable — equivalente a BaseBottomSheet del Support.
+/// Bottom sheet base reutilizable — mismo look en toda la app (estilo
+/// Instagram: manija arriba, título + botón cerrar, contenido abajo).
+/// Se adapta a modo claro/oscuro automáticamente.
 ///
 /// ```dart
-/// // Uso simple
+/// // Uso simple (contenido fijo)
 /// showModalBottomSheet(
 ///   context: context,
 ///   isScrollControlled: true,
@@ -18,11 +20,13 @@ import '../../helpers/app_colors.dart';
 ///   ),
 /// );
 ///
-/// // Con DraggableScrollableSheet
+/// // Contenido scrolleable (recibe el ScrollController del sheet)
 /// MgBottomSheet(
 ///   title: 'Nueva venta',
 ///   scrollable: true,
-///   child: MyScrollableList(),
+///   childBuilder: (context, scrollController) => MyScrollableList(
+///     controller: scrollController,
+///   ),
 /// )
 /// ```
 class MgBottomSheet extends StatelessWidget {
@@ -31,23 +35,37 @@ class MgBottomSheet extends StatelessWidget {
     this.title,
     this.subtitle,
     this.child,
+    this.childBuilder,
     this.action,
     this.initialHeightFactor = kSheetHeightLg,
+    this.minChildSize = 0.35,
     this.scrollable = false,
     this.onClose,
     this.padding,
     this.backgroundColor,
-  });
+  }) : assert(childBuilder == null || scrollable,
+            'childBuilder debe usarse junto con scrollable: true');
 
   final String? title;
   final String? subtitle;
+
+  /// Contenido fijo (no scrolleable). Ignorado si [childBuilder] está definido.
   final Widget? child;
+
+  /// Contenido scrolleable — recibe el [ScrollController] del sheet para que
+  /// el gesto de arrastrar y el scroll interno funcionen juntos.
+  final Widget Function(BuildContext context, ScrollController controller)?
+      childBuilder;
 
   /// Widget opcional junto al botón cerrar (ej. un botón de acción secundaria)
   final Widget? action;
 
   /// Factor de altura inicial (0.0 – 1.0). Usa las constantes kSheetHeight*.
   final double initialHeightFactor;
+
+  /// Altura mínima (0.0 – 1.0) a la que se puede arrastrar el sheet hacia
+  /// abajo. Solo aplica cuando [scrollable] es true.
+  final double minChildSize;
 
   /// true → envuelve en DraggableScrollableSheet
   final bool scrollable;
@@ -61,7 +79,7 @@ class MgBottomSheet extends StatelessWidget {
     if (scrollable) {
       return DraggableScrollableSheet(
         initialChildSize: initialHeightFactor,
-        minChildSize: 0.35,
+        minChildSize: minChildSize,
         maxChildSize: 0.95,
         builder: (ctx, scrollController) =>
             _buildContainer(ctx, scrollController: scrollController),
@@ -75,25 +93,30 @@ class MgBottomSheet extends StatelessWidget {
 
   Widget _buildContainer(BuildContext context,
       {ScrollController? scrollController}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final content = childBuilder != null
+        ? childBuilder!(context, scrollController ?? ScrollController())
+        : child;
+
     return Container(
       decoration: BoxDecoration(
-        color: backgroundColor ?? AppColors.surfaceLow,
+        color: backgroundColor ?? colorScheme.surfaceContainerLowest,
         borderRadius: kBorderRadiusTopXl,
       ),
       child: SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildHandle(),
+            _buildHandle(colorScheme),
             if (title != null) ...[
-              _buildHeader(context),
-              const Divider(height: 1, color: AppColors.outline),
+              _buildHeader(context, colorScheme),
+              Divider(height: 1, color: colorScheme.outlineVariant),
             ],
-            if (child != null)
+            if (content != null)
               Expanded(
                 child: Padding(
                   padding: padding ?? kSpaceDeviceMd,
-                  child: child!,
+                  child: content,
                 ),
               ),
           ],
@@ -102,7 +125,7 @@ class MgBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildHandle() {
+  Widget _buildHandle(ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.only(top: 10, bottom: 6),
       child: Center(
@@ -110,7 +133,7 @@ class MgBottomSheet extends StatelessWidget {
           width: 40,
           height: 4,
           decoration: BoxDecoration(
-            color: AppColors.grayLight,
+            color: colorScheme.outlineVariant,
             borderRadius: BorderRadius.circular(kRadiusCircular),
           ),
         ),
@@ -118,7 +141,7 @@ class MgBottomSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 8, 12),
       child: Row(
@@ -130,19 +153,19 @@ class MgBottomSheet extends StatelessWidget {
               children: [
                 Text(
                   title!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.onSurface,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 if (subtitle != null) ...[
                   const Gap(separatorXs),
                   Text(
                     subtitle!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.onSurfaceVariant,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -155,12 +178,12 @@ class MgBottomSheet extends StatelessWidget {
           ],
           IconButton(
             icon: Container(
-              padding: const EdgeInsets.all(4),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: AppColors.primarySubtle,
+                color: AppColors.error.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.close, size: 18, color: AppColors.primary),
+              child: const Icon(Icons.close, size: 22, color: AppColors.error),
             ),
             onPressed: onClose ?? () => Navigator.pop(context, false),
           ),

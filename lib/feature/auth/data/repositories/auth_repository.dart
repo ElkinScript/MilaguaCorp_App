@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -41,6 +43,25 @@ class AuthRepository {
   Future<Either<ServerException, String>> refreshToken(String refresh) async {
     try {
       final result = await _service.refreshToken(refresh);
+      return Right(result);
+    } catch (e) {
+      return Left(ServerException(parseError(e)));
+    }
+  }
+
+  Future<Either<ServerException, UserModel>> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? email,
+    File? profilePicture,
+  }) async {
+    try {
+      final result = await _service.updateProfile(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        profilePicture: profilePicture,
+      );
       return Right(result);
     } catch (e) {
       return Left(ServerException(parseError(e)));

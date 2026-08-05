@@ -5,13 +5,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../auth/domain/user_model.dart';
 import '../../../auth/view/controller/auth_controller.dart';
+import '../../../auth/view/widget/edit_profile_bottom_sheet.dart';
 import '../../../new_sale/view/widget/new_sale_bottom_sheet.dart';
+import '../../../product/view/controller/product_controller.dart';
 import '../../../product/view/widget/product_screen.dart';
+import '../../../report/view/controller/report_controller.dart';
 import '../../../report/view/widget/report_screen.dart';
 import '../../../sale/view/controller/sale_controller.dart';
 import '../../../sale/view/widget/sale_screen.dart';
 import '../controller/dashboard_controller.dart';
 import '../../../../core/helpers/app_colors.dart';
+import '../../../../core/theme/theme_mode_controller.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   static const routeName = '/home';
@@ -43,6 +47,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  void _reloadCurrentTab() {
+    switch (_currentIndex) {
+      case 0:
+        ref.read(dashboardControllerProvider.notifier).load();
+        break;
+      case 1:
+        ref.read(saleControllerProvider.notifier).load();
+        break;
+      case 2:
+        ref.read(productControllerProvider.notifier).load();
+        break;
+      case 3:
+        ref.read(reportControllerProvider.notifier).load();
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
@@ -53,22 +74,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
         elevation: 0,
-        titleSpacing: 12,
+        titleSpacing: 16,
+        toolbarHeight: 78,
         title: Row(
           children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white.withValues(alpha: 0.18),
-              child: Text(
-                userInfo?.initials ?? '?',
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+            GestureDetector(
+              onTap: () => EditProfileBottomSheet.show(context),
+              child: CircleAvatar(
+                radius: 28,
+                backgroundColor: Colors.white.withValues(alpha: 0.18),
+                backgroundImage: (userInfo?.profilePicture ?? '').isNotEmpty
+                    ? NetworkImage(userInfo!.profilePicture!)
+                    : null,
+                child: (userInfo?.profilePicture ?? '').isEmpty
+                    ? Text(
+                        userInfo?.initials ?? '?',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      )
+                    : null,
               ),
             ),
-            const Gap(10),
+            const Gap(12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,34 +108,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     userInfo?.displayName ?? 'Milagua Corp',
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w800,
                       color: Colors.white,
                     ),
                   ),
-                  if ((userInfo?.email ?? '').isNotEmpty)
-                    Text(
-                      userInfo!.email,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: AppColors.primaryLight,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
                   if (userInfo?.groupName.isNotEmpty ?? false) ...[
-                    const Gap(3),
+                    const Gap(5),
                     Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 3),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         userInfo!.groupName,
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 12,
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
                         ),
@@ -118,6 +138,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh, color: Colors.white),
+            tooltip: 'Recargar',
+            onPressed: _reloadCurrentTab,
+          ),
+          const _ThemeModeToggle(),
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
             tooltip: 'Cerrar sesión',
@@ -142,7 +168,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         shape: const CircularNotchedRectangle(),
         notchMargin: 6,
         child: SizedBox(
@@ -190,6 +216,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 }
 
+// ════════════════════════════════════════════════════════════════════
+// Selector de tema — un solo ícono, alterna claro/oscuro
+// ════════════════════════════════════════════════════════════════════
+
+class _ThemeModeToggle extends ConsumerWidget {
+  const _ThemeModeToggle();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final mode = ref.watch(themeModeControllerProvider);
+    final (icon, tooltip) = switch (mode) {
+      ThemeMode.light => (Icons.light_mode, 'Claro — toca para oscuro'),
+      ThemeMode.dark => (Icons.dark_mode, 'Oscuro — toca para automático'),
+      ThemeMode.system => (Icons.brightness_auto, 'Automático (sistema) — toca para claro'),
+    };
+    return IconButton(
+      icon: Icon(icon, color: Colors.white),
+      tooltip: tooltip,
+      onPressed: () => ref.read(themeModeControllerProvider.notifier).cycle(),
+    );
+  }
+}
+
 class _NavItem extends StatelessWidget {
   const _NavItem({
     required this.icon,
@@ -208,7 +257,7 @@ class _NavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const primary = AppColors.primary;
-    const muted = Color(0xFF94a3b8);
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -264,7 +313,8 @@ class _DashboardTab extends ConsumerWidget {
                 const Gap(16),
                 Text(msg,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Color(0xFF64748b))),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 const Gap(16),
                 ElevatedButton(
                   onPressed: () =>
@@ -283,7 +333,7 @@ class _DashboardTab extends ConsumerWidget {
               'Resumen del mes',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF1e293b),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
             ),
             const Gap(16),
@@ -327,7 +377,7 @@ class _DashboardTab extends ConsumerWidget {
                 'Ventas recientes',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: const Color(0xFF1e293b),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
               ),
               const Gap(12),
@@ -343,11 +393,15 @@ class _DashboardTab extends ConsumerWidget {
                       ),
                       title: Text(
                           s.client.isNotEmpty ? s.client : 'Sin cliente',
-                          style: const TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.onSurface)),
                       subtitle: Text(s.saleDate,
-                          style: const TextStyle(
-                              fontSize: 12, color: Color(0xFF94a3b8))),
+                          style: TextStyle(
+                              fontSize: 12,
+                              color:
+                                  Theme.of(context).colorScheme.onSurfaceVariant)),
                       trailing: Text(
                         '\$${s.total.toStringAsFixed(2)}',
                         style: const TextStyle(
@@ -405,9 +459,9 @@ class _SummaryCard extends StatelessWidget {
                 ),
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
-                    color: Color(0xFF64748b),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],

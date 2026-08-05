@@ -65,11 +65,12 @@ class _MgAlertState extends State<MgAlert> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return LoadingOverlay(
       isLoading: _loading,
       color: Colors.black45,
       child: Dialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kRadiusLg)),
         child: Padding(
           padding: kSpaceDeviceLg,
@@ -86,10 +87,10 @@ class _MgAlertState extends State<MgAlert> {
               ],
               Text(
                 widget.title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.onSurface,
+                  color: colorScheme.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -97,9 +98,9 @@ class _MgAlertState extends State<MgAlert> {
                 const Gap(separatorSm),
                 Text(
                   widget.content!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: AppColors.onSurfaceVariant,
+                    color: colorScheme.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),

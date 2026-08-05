@@ -41,7 +41,11 @@ class DioHttpClient {
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
-          options.headers['Content-Type'] = 'application/json';
+          // No forzar JSON en requests multipart (ej. subida de foto de
+          // perfil) — Dio ya pone el boundary correcto para FormData.
+          if (options.data is! FormData) {
+            options.headers['Content-Type'] = 'application/json';
+          }
           options.headers['app-source'] = 'milaguacorp-app';
           options.baseUrl = FlavorConfig.instance.baseUrl;
           return handler.next(options);

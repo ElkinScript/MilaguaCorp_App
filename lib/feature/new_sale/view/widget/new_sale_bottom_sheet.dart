@@ -34,159 +34,104 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
     final state = ref.watch(newSaleControllerProvider);
     final ctrl = ref.read(newSaleControllerProvider.notifier);
 
-    // Mostrar SnackBar cuando aparece un error de submit.
+    // Toast de error cuando falla el submit de la venta.
     ref.listen<NewSaleState>(newSaleControllerProvider, (prev, next) {
       final err = next.mapOrNull(ready: (s) => s.submitError);
       if (err != null && err.isNotEmpty) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(err),
-              backgroundColor: const Color(0xFFef4444),
-              behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 4),
-            ),
-          );
+        MgToast.error(context, err);
         ctrl.clearSubmitError();
       }
     });
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.92,
+    return MgBottomSheet(
+      title: 'Nueva Venta',
+      scrollable: true,
+      initialHeightFactor: 0.92,
       minChildSize: 0.5,
-      maxChildSize: 0.95,
-      builder: (context, scrollController) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFFf8fafc),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              const Gap(8),
-              // ── Drag handle ────────────────────────────────────────
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFcbd5e1),
-                  borderRadius: BorderRadius.circular(2),
+      padding: EdgeInsets.zero,
+      childBuilder: (context, scrollController) {
+        return Column(
+          children: [
+            _StepIndicator(currentStep: _step),
+            Expanded(
+              child: state.when(
+                initial: () => const SizedBox(),
+                loading: () => const Center(
+                  child: CircularProgressIndicator(color: AppColors.primary),
                 ),
-              ),
-              const Gap(12),
-              // ── Cabecera ───────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    const Text(
-                      'Nueva Venta',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1e293b),
-                      ),
-                    ),
-                    const Spacer(),
-                    IconButton(
-                      icon: Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
-                          shape: BoxShape.circle,
+                error: (msg) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline,
+                            size: 48, color: AppColors.error),
+                        const Gap(16),
+                        Text(msg, textAlign: TextAlign.center),
+                        const Gap(16),
+                        MgBtn(
+                          label: 'Reintentar',
+                          onTap: () => ctrl.load(),
                         ),
-                        child: const Icon(Icons.close,
-                            size: 18, color: AppColors.primary),
-                      ),
-                      onPressed: () => Navigator.pop(context, false),
-                    ),
-                  ],
-                ),
-              ),
-              _StepIndicator(currentStep: _step),
-              const Divider(height: 1),
-              Expanded(
-                child: state.when(
-                  initial: () => const SizedBox(),
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(
-                        color: AppColors.primary),
-                  ),
-                  error: (msg) => Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.error_outline,
-                              size: 48, color: Color(0xFFef4444)),
-                          const Gap(16),
-                          Text(msg, textAlign: TextAlign.center),
-                          const Gap(16),
-                          MgBtn(
-                            label: 'Reintentar',
-                            onTap: () => ctrl.load(),
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
                   ),
-                  ready: (products, branches, cart, selectedBranch,
-                      paymentMethod, clientName, clientPhone, clientEmail,
-                      observation, hasContainer, submitting, success,
-                      submitError) {
-                    if (_step == 0) {
-                      return _ProductsStep(
-                        products: products,
-                        cart: cart,
-                        scrollController: scrollController,
-                        onAdd: (p) =>
-                            _showQuantityDialog(context, p, ctrl),
-                        onNext: () {
-                          if (cart.isNotEmpty) setState(() => _step = 1);
-                        },
-                        cartCount: cart.length,
-                        cartTotal: ctrl.total,
-                      );
-                    } else if (_step == 1) {
-                      return _CartStep(
-                        cart: cart,
-                        branches: branches,
-                        selectedBranch: selectedBranch,
-                        paymentMethod: paymentMethod,
-                        clientName: clientName,
-                        clientPhone: clientPhone,
-                        clientEmail: clientEmail,
-                        observation: observation,
-                        hasContainer: hasContainer,
-                        scrollController: scrollController,
-                        ctrl: ctrl,
-                        total: ctrl.total,
-                        onBack: () => setState(() => _step = 0),
-                        onNext: () => setState(() => _step = 2),
-                      );
-                    } else {
-                      return _ConfirmStep(
-                        cart: cart,
-                        total: ctrl.total,
-                        clientName: clientName,
-                        paymentMethod: paymentMethod,
-                        submitting: submitting,
-                        onBack: () => setState(() => _step = 1),
-                        onConfirm: () async {
-                          final ok = await ctrl.submitSale();
-                          if (ok && context.mounted) {
-                            Navigator.pop(context, true);
-                          }
-                        },
-                      );
-                    }
-                  },
                 ),
+                ready: (products, branches, cart, selectedBranch,
+                    paymentMethod, clientName, clientPhone, clientEmail,
+                    observation, hasContainer, submitting, success,
+                    submitError) {
+                  if (_step == 0) {
+                    return _ProductsStep(
+                      products: products,
+                      cart: cart,
+                      scrollController: scrollController,
+                      onAdd: (p) => _showQuantityDialog(context, p, ctrl),
+                      onNext: () {
+                        if (cart.isNotEmpty) setState(() => _step = 1);
+                      },
+                      cartCount: cart.length,
+                      cartTotal: ctrl.total,
+                    );
+                  } else if (_step == 1) {
+                    return _CartStep(
+                      cart: cart,
+                      branches: branches,
+                      selectedBranch: selectedBranch,
+                      paymentMethod: paymentMethod,
+                      clientName: clientName,
+                      clientPhone: clientPhone,
+                      clientEmail: clientEmail,
+                      observation: observation,
+                      hasContainer: hasContainer,
+                      scrollController: scrollController,
+                      ctrl: ctrl,
+                      total: ctrl.total,
+                      onBack: () => setState(() => _step = 0),
+                      onNext: () => setState(() => _step = 2),
+                    );
+                  } else {
+                    return _ConfirmStep(
+                      cart: cart,
+                      total: ctrl.total,
+                      clientName: clientName,
+                      paymentMethod: paymentMethod,
+                      submitting: submitting,
+                      onBack: () => setState(() => _step = 1),
+                      onConfirm: () async {
+                        final ok = await ctrl.submitSale();
+                        if (ok && context.mounted) {
+                          MgToast.success(context, 'Venta registrada correctamente');
+                          Navigator.pop(context, true);
+                        }
+                      },
+                    );
+                  }
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
@@ -279,6 +224,7 @@ class _StepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final steps = ['Productos', 'Detalle', 'Confirmar'];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -294,7 +240,7 @@ class _StepIndicator extends StatelessWidget {
                       height: 2,
                       color: active
                           ? AppColors.primary
-                          : const Color(0xFFe2e8f0),
+                          : colorScheme.outlineVariant,
                     ),
                   ),
                 Container(
@@ -303,7 +249,7 @@ class _StepIndicator extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: active
                         ? AppColors.primary
-                        : const Color(0xFFe2e8f0),
+                        : colorScheme.outlineVariant,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -312,7 +258,7 @@ class _StepIndicator extends StatelessWidget {
                       style: TextStyle(
                         color: active
                             ? Colors.white
-                            : const Color(0xFF94a3b8),
+                            : colorScheme.onSurfaceVariant,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -385,8 +331,9 @@ class _ProductsStep extends StatelessWidget {
                   ),
                   subtitle: Text(
                     p.productType?.name ?? '',
-                    style: const TextStyle(
-                        fontSize: 12, color: Color(0xFF64748b)),
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -404,9 +351,11 @@ class _ProductsStep extends StatelessWidget {
                           ),
                           Text(
                             'Stock: ${p.stockQuantity}',
-                            style: const TextStyle(
+                            style: TextStyle(
                                 fontSize: 11,
-                                color: Color(0xFF94a3b8)),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -507,13 +456,14 @@ class _CartStepState extends ConsumerState<_CartStep> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final dropBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: Color(0xFFe2e8f0)),
+      borderSide: BorderSide(color: colorScheme.outlineVariant),
     );
     final dropDecoration = InputDecoration(
       filled: true,
-      fillColor: Colors.white,
+      fillColor: colorScheme.surface,
       border: dropBorder,
       enabledBorder: dropBorder,
       focusedBorder: OutlineInputBorder(
@@ -554,9 +504,9 @@ class _CartStepState extends ConsumerState<_CartStep> {
                                 ),
                                 Text(
                                   '\$${item.unitPrice} c/u',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12,
-                                      color: Color(0xFF64748b)),
+                                      color: colorScheme.onSurfaceVariant),
                                 ),
                               ],
                             ),
@@ -681,7 +631,7 @@ class _CartStepState extends ConsumerState<_CartStep> {
                       fontSize: 12,
                       color: widget.hasContainer
                           ? AppColors.primary
-                          : const Color(0xFFf59e0b),
+                          : const Color(0xFF92400e),
                     ),
                   ),
                 ),
@@ -733,9 +683,9 @@ class _CartStepState extends ConsumerState<_CartStep> {
         // ── Botones navegación ─────────────────────────────────────
         Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(top: BorderSide(color: Color(0xFFe2e8f0))),
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
           ),
           child: Row(
             children: [
@@ -820,11 +770,12 @@ class _ConfirmStep extends StatelessWidget {
                       : 'Sin cliente'),
               _InfoRow(label: 'Pago', value: paymentMethod),
               const Gap(24),
-              const Text(
+              Text(
                 'Al confirmar, se registrará la venta y se descontará el stock automáticamente.',
                 textAlign: TextAlign.center,
-                style:
-                    TextStyle(fontSize: 13, color: Color(0xFF64748b)),
+                style: TextStyle(
+                    fontSize: 13,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ],
           ),
@@ -887,22 +838,20 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(label,
-              style: const TextStyle(
-                  color: Color(0xFF64748b), fontSize: 14)),
+              style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14)),
           Text(
             value,
             style: TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: highlight ? 18 : 14,
-              color: highlight
-                  ? AppColors.primary
-                  : const Color(0xFF1e293b),
+              color: highlight ? AppColors.primary : colorScheme.onSurface,
             ),
           ),
         ],

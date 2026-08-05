@@ -8,6 +8,7 @@ import '../../domain/sale_model.dart';
 import '../controller/sale_controller.dart';
 
 import '../../../../core/helpers/app_colors.dart';
+
 class SaleScreen extends ConsumerWidget {
   static const routeName = '/sales';
 
@@ -16,6 +17,7 @@ class SaleScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(saleControllerProvider);
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return RefreshIndicator(
       onRefresh: () => ref.read(saleControllerProvider.notifier).load(),
@@ -36,7 +38,7 @@ class SaleScreen extends ConsumerWidget {
                 const Gap(16),
                 Text(msg,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Color(0xFF64748b))),
+                    style: TextStyle(color: muted)),
                 const Gap(16),
                 ElevatedButton(
                   onPressed: () =>
@@ -48,16 +50,15 @@ class SaleScreen extends ConsumerWidget {
           ),
         ),
         loaded: (sales) => sales.isEmpty
-            ? const Center(
+            ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.receipt_long_outlined,
-                        size: 64, color: Color(0xFF94a3b8)),
-                    Gap(16),
+                    Icon(Icons.receipt_long_outlined, size: 64, color: muted),
+                    const Gap(16),
                     Text(
                       'No hay ventas registradas',
-                      style: TextStyle(color: Color(0xFF64748b)),
+                      style: TextStyle(color: muted),
                     ),
                   ],
                 ),
@@ -84,6 +85,7 @@ class _SaleCard extends StatelessWidget {
     final clientName = sale.client?.name.isNotEmpty == true
         ? sale.client!.name
         : 'Sin cliente';
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       child: Padding(
@@ -96,27 +98,27 @@ class _SaleCard extends StatelessWidget {
                 children: [
                   Text(
                     clientName,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF1e293b),
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const Gap(4),
                   Text(
                     sale.saleDate,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: Color(0xFF94a3b8),
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                   if (sale.branchName.isNotEmpty) ...[
                     const Gap(2),
                     Text(
                       sale.branchName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF94a3b8),
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -140,7 +142,7 @@ class _SaleCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: const Color(0x1F0ea5c8),
+                      color: AppColors.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -158,17 +160,17 @@ class _SaleCard extends StatelessWidget {
                     ProformaScreen.routeName,
                     extra: sale,
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.receipt_outlined,
-                          size: 14, color: Color(0xFF64748b)),
-                      Gap(2),
+                          size: 14, color: colorScheme.onSurfaceVariant),
+                      const Gap(2),
                       Text(
                         'Ver proforma',
                         style: TextStyle(
                           fontSize: 11,
-                          color: Color(0xFF64748b),
+                          color: colorScheme.onSurfaceVariant,
                           decoration: TextDecoration.underline,
                         ),
                       ),

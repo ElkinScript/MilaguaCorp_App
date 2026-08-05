@@ -6,6 +6,7 @@ import '../../domain/product_model.dart';
 import '../controller/product_controller.dart';
 
 import '../../../../core/helpers/app_colors.dart';
+
 class ProductScreen extends ConsumerWidget {
   static const routeName = '/products';
 
@@ -14,6 +15,7 @@ class ProductScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(productControllerProvider);
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return RefreshIndicator(
       onRefresh: () => ref.read(productControllerProvider.notifier).load(),
@@ -34,7 +36,7 @@ class ProductScreen extends ConsumerWidget {
                 const Gap(16),
                 Text(msg,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Color(0xFF64748b))),
+                    style: TextStyle(color: muted)),
                 const Gap(16),
                 ElevatedButton(
                   onPressed: () =>
@@ -46,16 +48,15 @@ class ProductScreen extends ConsumerWidget {
           ),
         ),
         loaded: (products) => products.isEmpty
-            ? const Center(
+            ? Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.inventory_2_outlined,
-                        size: 64, color: Color(0xFF94a3b8)),
-                    Gap(16),
+                    Icon(Icons.inventory_2_outlined, size: 64, color: muted),
+                    const Gap(16),
                     Text(
                       'No hay productos disponibles',
-                      style: TextStyle(color: Color(0xFF64748b)),
+                      style: TextStyle(color: muted),
                     ),
                   ],
                 ),
@@ -82,6 +83,7 @@ class _ProductCard extends StatelessWidget {
     final typeName = product.productType?.name ?? '';
     final price = product.activePrice ?? '—';
     final stock = product.stockQuantity;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
       child: Padding(
@@ -105,19 +107,19 @@ class _ProductCard extends StatelessWidget {
                 children: [
                   Text(
                     product.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF1e293b),
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   if (typeName.isNotEmpty) ...[
                     const Gap(2),
                     Text(
                       typeName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Color(0xFF64748b),
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

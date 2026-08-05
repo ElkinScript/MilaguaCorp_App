@@ -1,5 +1,4 @@
 import 'package:device_preview_plus/device_preview_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,8 +19,10 @@ Future<void> commonMain({
   await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
   runApp(
     DevicePreview(
-      // Solo activo en debug. En release el wrapper se desactiva solo.
-      enabled: !kReleaseMode,
+      // Desactivado: simula su propio brillo/tema por encima del real del
+      // dispositivo, lo cual pisaba el modo claro/oscuro/sistema de la app.
+      // Pruebas siempre en dispositivo físico, así que no aporta nada aquí.
+      enabled: false,
       builder: (context) => const ProviderScope(child: AppWidget()),
     ),
   );

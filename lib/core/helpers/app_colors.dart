@@ -70,3 +70,42 @@ class AppColorScheme extends ColorScheme {
           shadow: Colors.black,
         );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Paleta oscura — mismo azul marino de marca, superficies invertidas
+// ─────────────────────────────────────────────────────────────────────────────
+class AppColorsDark {
+  AppColorsDark._();
+
+  static const Color surface            = Color(0xFF1B232C);
+  static const Color surfaceLow          = Color(0xFF10151A);
+  static const Color surfaceContainer    = Color(0xFF232D38);
+  static const Color onSurface           = Color(0xFFE7ECF2);
+  static const Color onSurfaceVariant    = Color(0xFF9AA7B4);
+  static const Color outline             = Color(0xFF2E3A46);
+}
+
+class AppDarkColorScheme extends ColorScheme {
+  const AppDarkColorScheme()
+      : super(
+          brightness: Brightness.dark,
+          primary: AppColors.primaryLight,
+          onPrimary: AppColors.primaryDark,
+          secondary: AppColors.primaryLight,
+          onSecondary: AppColors.primaryDark,
+          error: AppColors.error,
+          onError: Colors.white,
+          surface: AppColorsDark.surface,
+          onSurface: AppColorsDark.onSurface,
+          onSurfaceVariant: AppColorsDark.onSurfaceVariant,
+          surfaceContainerLowest: AppColorsDark.surfaceLow,
+          surfaceContainerLow: AppColorsDark.surfaceContainer,
+          surfaceContainer: AppColorsDark.outline,
+          outline: AppColorsDark.outline,
+          outlineVariant: AppColorsDark.outline,
+          inverseSurface: AppColorsDark.onSurface,
+          onInverseSurface: AppColorsDark.surfaceLow,
+          scrim: Colors.black,
+          shadow: Colors.black,
+        );
+}

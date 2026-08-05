@@ -192,33 +192,15 @@ class NewSaleController extends StateNotifier<NewSaleState> {
       return true;
     } on DioException catch (e) {
       ErrorLogger(runtimeType).dio(e, 'submitSale');
-      final msg = _extractDioError(e);
-      state = (s as dynamic).copyWith(submitting: false, submitError: msg) as NewSaleState;
+      state = (s as dynamic)
+          .copyWith(submitting: false, submitError: parseError(e)) as NewSaleState;
       return false;
     } catch (e) {
       ErrorLogger(runtimeType).regular(e, 'submitSale');
       state = (s as dynamic)
-          .copyWith(submitting: false, submitError: 'Ocurrió un error: $e') as NewSaleState;
+          .copyWith(submitting: false, submitError: parseError(e)) as NewSaleState;
       return false;
     }
-  }
-
-  /// Extrae un mensaje legible del DioException (ej: errores de validación DRF).
-  String _extractDioError(DioException e) {
-    final data = e.response?.data;
-    if (data is Map<String, dynamic>) {
-      final parts = <String>[];
-      data.forEach((key, value) {
-        if (value is List) {
-          parts.add('$key: ${value.join(", ")}');
-        } else {
-          parts.add('$key: $value');
-        }
-      });
-      if (parts.isNotEmpty) return parts.join('\n');
-    }
-    if (data is String && data.isNotEmpty) return data;
-    return e.message ?? 'Error al guardar la venta.';
   }
 
   void clearSubmitError() {

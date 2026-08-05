@@ -13,6 +13,7 @@ class UserModel with _$UserModel {
     @JsonKey(name: 'last_name') @Default('') String lastName,
     @Default('') String email,
     @JsonKey(name: 'full_name') @Default('') String fullName,
+    @JsonKey(name: 'profile_picture') @Default(null) String? profilePicture,
     // API returns groups as List<String> (flat names)
     @Default([]) List<String> groups,
     // employee_profile nested object — nullable

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/utils/logger.dart';
@@ -48,5 +51,28 @@ class AuthService implements AuthInterface {
     DebugLogger(runtimeType)
         .response(url, [response.statusCode, response.data]);
     return (response.data as Map<String, dynamic>)['access'] as String;
+  }
+
+  @override
+  Future<UserModel> updateProfile({
+    String? firstName,
+    String? lastName,
+    String? email,
+    File? profilePicture,
+  }) async {
+    const url = '/api/auth/update-profile/';
+    final formData = FormData.fromMap({
+      if (firstName != null) 'first_name': firstName,
+      if (lastName != null) 'last_name': lastName,
+      if (email != null) 'email': email,
+      if (profilePicture != null)
+        'profile_picture': await MultipartFile.fromFile(profilePicture.path),
+    });
+    DebugLogger(runtimeType).request(url);
+    final response = await _http().patch(url, data: formData);
+    DebugLogger(runtimeType)
+        .response(url, [response.statusCode, response.data]);
+    final data = response.data as Map<String, dynamic>;
+    return UserModel.fromJson(data['user'] as Map<String, dynamic>);
   }
 }

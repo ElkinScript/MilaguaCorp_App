@@ -54,9 +54,10 @@ class MgInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(kRadiusMd),
-      borderSide: const BorderSide(color: AppColors.outline),
+      borderSide: BorderSide(color: colorScheme.outlineVariant),
     );
     final focusedBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(kRadiusMd),
@@ -80,17 +81,17 @@ class MgInput extends StatelessWidget {
       focusNode: focusNode,
       onFieldSubmitted: onFieldSubmitted,
       textInputAction: textInputAction,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 14,
-        color: AppColors.onSurface,
+        color: colorScheme.onSurface,
       ),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         filled: true,
-        fillColor: enabled ? AppColors.surface : AppColors.surfaceContainer,
+        fillColor: enabled ? colorScheme.surface : colorScheme.surfaceContainer,
         prefixIcon: prefixIcon != null
-            ? Icon(prefixIcon, size: 20, color: AppColors.gray)
+            ? Icon(prefixIcon, size: 20, color: colorScheme.onSurfaceVariant)
             : null,
         suffixIcon: suffixIcon,
         border: border,
@@ -100,8 +101,8 @@ class MgInput extends StatelessWidget {
         errorBorder: errorBorder,
         focusedErrorBorder: errorBorder,
         contentPadding: kSpaceDeviceHVSm,
-        labelStyle: const TextStyle(color: AppColors.onSurfaceVariant, fontSize: 14),
-        hintStyle: const TextStyle(color: AppColors.grayLight, fontSize: 14),
+        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
+        hintStyle: TextStyle(color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6), fontSize: 14),
         errorStyle: const TextStyle(color: AppColors.error, fontSize: 11),
       ),
     );

@@ -61,8 +61,9 @@ class MgBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = color ?? (isOutline ? AppColors.surface : AppColors.primary);
-    final fg = textColor ?? (isOutline ? AppColors.primary : AppColors.onPrimary);
+    final colorScheme = Theme.of(context).colorScheme;
+    final bg = color ?? (isOutline ? colorScheme.surface : AppColors.primary);
+    final fg = textColor ?? (isOutline ? colorScheme.primary : AppColors.onPrimary);
 
     final btn = ElevatedButton(
       style: ElevatedButton.styleFrom(
@@ -74,7 +75,7 @@ class MgBtn extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radius),
           side: isOutline
-              ? BorderSide(color: color ?? AppColors.primary, width: 1.5)
+              ? BorderSide(color: color ?? colorScheme.primary, width: 1.5)
               : BorderSide.none,
         ),
       ),
