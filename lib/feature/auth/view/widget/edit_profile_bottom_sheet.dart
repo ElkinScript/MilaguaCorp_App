@@ -89,9 +89,8 @@ class _EditProfileBottomSheetState
 
     return MgBottomSheet(
       title: 'Editar perfil',
-      scrollable: true,
-      initialHeightFactor: 0.62,
-      minChildSize: 0.5,
+      scrollable: false,
+      initialHeightFactor: 0.72,
       childBuilder: (context, scrollController) {
         return ListView(
           controller: scrollController,
@@ -101,7 +100,7 @@ class _EditProfileBottomSheetState
                 clipBehavior: Clip.none,
                 children: [
                   CircleAvatar(
-                    radius: 48,
+                    radius: 72,
                     backgroundColor: AppColors.primaryLight,
                     backgroundImage: _pickedImage != null
                         ? FileImage(_pickedImage!)
@@ -114,7 +113,7 @@ class _EditProfileBottomSheetState
                         ? Text(
                             user?.initials ?? '?',
                             style: const TextStyle(
-                              fontSize: 28,
+                              fontSize: 40,
                               fontWeight: FontWeight.w700,
                               color: AppColors.primaryDark,
                             ),
@@ -122,27 +121,27 @@ class _EditProfileBottomSheetState
                         : null,
                   ),
                   Positioned(
-                    bottom: -4,
-                    right: -4,
+                    bottom: 0,
+                    right: 0,
                     child: GestureDetector(
                       onTap: _pickImage,
                       child: Container(
-                        padding: const EdgeInsets.all(7),
+                        padding: const EdgeInsets.all(9),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           shape: BoxShape.circle,
                           border:
-                              Border.all(color: colorScheme.surface, width: 2),
+                              Border.all(color: colorScheme.surface, width: 3),
                         ),
                         child: const Icon(Icons.edit,
-                            size: 16, color: Colors.white),
+                            size: 20, color: Colors.white),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            const Gap(24),
+            const Gap(32),
             MgInput(
               controller: _firstNameCtrl,
               label: 'Nombres',

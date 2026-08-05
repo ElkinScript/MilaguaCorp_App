@@ -1,4 +1,5 @@
 import 'package:device_preview_plus/device_preview_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,10 +20,12 @@ Future<void> commonMain({
   await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
   runApp(
     DevicePreview(
-      // Desactivado: simula su propio brillo/tema por encima del real del
-      // dispositivo, lo cual pisaba el modo claro/oscuro/sistema de la app.
-      // Pruebas siempre en dispositivo físico, así que no aporta nada aquí.
-      enabled: false,
+      // OJO: el panel de DevicePreview tiene su PROPIO switch claro/oscuro
+      // (sección "System"), separado del tema real del dispositivo — no
+      // sigue "sistema", solo simula Light/Dark según lo que elijas ahí.
+      // Si algún día el tema se ve "atascado" en claro sin razón, revisa
+      // primero ese switch antes de sospechar del ThemeModeController.
+      enabled: !kReleaseMode,
       builder: (context) => const ProviderScope(child: AppWidget()),
     ),
   );

@@ -43,8 +43,7 @@ class MgBottomSheet extends StatelessWidget {
     this.onClose,
     this.padding,
     this.backgroundColor,
-  }) : assert(childBuilder == null || scrollable,
-            'childBuilder debe usarse junto con scrollable: true');
+  });
 
   final String? title;
   final String? subtitle;
@@ -67,7 +66,9 @@ class MgBottomSheet extends StatelessWidget {
   /// abajo. Solo aplica cuando [scrollable] es true.
   final double minChildSize;
 
-  /// true → envuelve en DraggableScrollableSheet
+  /// true → altura ajustable arrastrando (DraggableScrollableSheet).
+  /// false (default) → altura fija de [initialHeightFactor]; si el
+  /// contenido no cabe, [childBuilder]/[child] deben scrollear por su cuenta.
   final bool scrollable;
 
   final VoidCallback? onClose;

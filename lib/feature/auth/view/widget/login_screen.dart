@@ -73,9 +73,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   Column(
                     children: [
                       SizedBox(
-                        height: 220,
+                        height: (MediaQuery.sizeOf(context).height * 0.32)
+                            .clamp(220, 420),
                         child: Lottie.asset(
-                          'assets/lottie/girl_watering_plants.json',
+                          'assets/lottie/earth_globe.json',
                           repeat: true,
                           fit: BoxFit.contain,
                         ),

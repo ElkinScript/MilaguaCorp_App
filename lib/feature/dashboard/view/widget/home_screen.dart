@@ -113,23 +113,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       color: Colors.white,
                     ),
                   ),
-                  if (userInfo?.groupName.isNotEmpty ?? false) ...[
+                  if ((userInfo?.groupName.isNotEmpty ?? false) ||
+                      (userInfo?.username.isNotEmpty ?? false)) ...[
                     const Gap(5),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        userInfo!.groupName,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: [
+                        if (userInfo?.groupName.isNotEmpty ?? false)
+                          _HeaderChip(label: userInfo!.groupName),
+                        if (userInfo?.username.isNotEmpty ?? false)
+                          _HeaderChip(
+                            label: userInfo!.username,
+                            icon: Icons.badge_outlined,
+                          ),
+                      ],
                     ),
                   ],
                 ],
@@ -235,6 +233,41 @@ class _ThemeModeToggle extends ConsumerWidget {
       icon: Icon(icon, color: Colors.white),
       tooltip: tooltip,
       onPressed: () => ref.read(themeModeControllerProvider.notifier).cycle(),
+    );
+  }
+}
+
+class _HeaderChip extends StatelessWidget {
+  const _HeaderChip({required this.label, this.icon});
+
+  final String label;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 12, color: Colors.white),
+            const Gap(4),
+          ],
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
