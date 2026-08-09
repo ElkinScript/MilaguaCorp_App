@@ -78,10 +78,10 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
                     ),
                   ),
                 ),
-                ready: (products, branches, cart, selectedBranch,
-                    paymentMethod, clientName, clientPhone, clientEmail,
-                    observation, hasContainer, submitting, success,
-                    submitError) {
+                ready: (products, branches, paymentMethods, cart,
+                    selectedBranch, paymentMethod, clientName, clientPhone,
+                    clientEmail, observation, hasContainer, submitting,
+                    success, submitError) {
                   if (_step == 0) {
                     return _ProductsStep(
                       products: products,
@@ -99,6 +99,7 @@ class _NewSaleBottomSheetState extends ConsumerState<NewSaleBottomSheet> {
                       cart: cart,
                       branches: branches,
                       selectedBranch: selectedBranch,
+                      paymentMethods: paymentMethods,
                       paymentMethod: paymentMethod,
                       clientName: clientName,
                       clientPhone: clientPhone,
@@ -402,6 +403,7 @@ class _CartStep extends ConsumerStatefulWidget {
     required this.cart,
     required this.branches,
     required this.selectedBranch,
+    required this.paymentMethods,
     required this.paymentMethod,
     required this.clientName,
     required this.clientPhone,
@@ -418,6 +420,7 @@ class _CartStep extends ConsumerStatefulWidget {
   final List<CartItem> cart;
   final List<BranchModel> branches;
   final BranchModel? selectedBranch;
+  final List<PaymentMethodModel> paymentMethods;
   final String paymentMethod;
   final String clientName, clientPhone, clientEmail, observation;
   final bool hasContainer;
@@ -575,15 +578,19 @@ class _CartStepState extends ConsumerState<_CartStep> {
               DropdownButtonFormField<String>(
                 value: widget.paymentMethod,
                 decoration: dropDecoration,
-                items: const [
-                  DropdownMenuItem(
-                      value: 'efectivo', child: Text('Efectivo')),
-                  DropdownMenuItem(
-                      value: 'transferencia',
-                      child: Text('Transferencia')),
-                  DropdownMenuItem(
-                      value: 'tarjeta', child: Text('Tarjeta')),
-                ],
+                // Viene de Administración > Datos Dinámicos — si no llegó
+                // nada del servidor, "Efectivo" queda como único respaldo.
+                items: (widget.paymentMethods.isNotEmpty
+                        ? widget.paymentMethods
+                        : const [
+                            PaymentMethodModel(
+                                value: 'efectivo', label: 'Efectivo'),
+                          ])
+                    .map((m) => DropdownMenuItem(
+                          value: m.value,
+                          child: Text(m.label),
+                        ))
+                    .toList(),
                 onChanged: (v) {
                   if (v != null) widget.ctrl.setPaymentMethod(v);
                 },

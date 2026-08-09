@@ -12,6 +12,7 @@ class NewSaleState with _$NewSaleState {
   const factory NewSaleState.ready({
     required List<ProductModel> products,
     required List<BranchModel> branches,
+    @Default([]) List<PaymentMethodModel> paymentMethods,
     required List<CartItem> cart,
     BranchModel? selectedBranch,
     @Default('efectivo') String paymentMethod,

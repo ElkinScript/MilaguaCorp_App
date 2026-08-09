@@ -92,3 +92,23 @@ class BranchModel with _$BranchModel {
   factory BranchModel.fromJson(Map<String, dynamic> json) =>
       _$BranchModelFromJson(json);
 }
+
+// Payment method option — viene de Administración > Datos Dinámicos, no
+// está fijo en la app (así se puede agregar uno nuevo sin actualizar el APK).
+@freezed
+class PaymentMethodModel with _$PaymentMethodModel {
+  const factory PaymentMethodModel({
+    required String value,
+    required String label,
+  }) = _PaymentMethodModel;
+
+  factory PaymentMethodModel.fromJson(Map<String, dynamic> json) =>
+      _$PaymentMethodModelFromJson(json);
+}
+
+class NewSaleInitData {
+  const NewSaleInitData({required this.branches, required this.paymentMethods});
+
+  final List<BranchModel> branches;
+  final List<PaymentMethodModel> paymentMethods;
+}

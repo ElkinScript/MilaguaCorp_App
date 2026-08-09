@@ -26,16 +26,19 @@ class NewSaleService {
         .toList();
   }
 
-  Future<List<BranchModel>> getBranches() async {
+  Future<NewSaleInitData> getInitData() async {
     const url = '/api/administration/data/';
     DebugLogger(runtimeType).request(url);
     final r = await _http().get(url);
     DebugLogger(runtimeType).response(url, [r.statusCode, r.data]);
     final data = r.data as Map<String, dynamic>;
-    final branches = (data['branches'] as List<dynamic>? ?? []);
-    return branches
+    final branches = (data['branches'] as List<dynamic>? ?? [])
         .map((e) => BranchModel.fromJson(e as Map<String, dynamic>))
         .toList();
+    final paymentMethods = (data['paymentMethods'] as List<dynamic>? ?? [])
+        .map((e) => PaymentMethodModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+    return NewSaleInitData(branches: branches, paymentMethods: paymentMethods);
   }
 
   Future<Map<String, dynamic>> createSale(NewSaleRequest request) async {

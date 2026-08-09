@@ -27,13 +27,18 @@ class NewSaleController extends StateNotifier<NewSaleState> {
     state = const NewSaleState.loading();
     try {
       final products = await _service.getProducts();
-      final branches = await _service.getBranches();
+      final initData = await _service.getInitData();
       state = NewSaleState.ready(
         products:
             products.where((p) => p.state && p.stockQuantity > 0).toList(),
-        branches: branches,
+        branches: initData.branches,
+        paymentMethods: initData.paymentMethods,
         cart: const [],
-        selectedBranch: branches.isNotEmpty ? branches.first : null,
+        selectedBranch:
+            initData.branches.isNotEmpty ? initData.branches.first : null,
+        paymentMethod: initData.paymentMethods.isNotEmpty
+            ? initData.paymentMethods.first.value
+            : 'efectivo',
       );
     } catch (e) {
       state = NewSaleState.error(parseError(e));
