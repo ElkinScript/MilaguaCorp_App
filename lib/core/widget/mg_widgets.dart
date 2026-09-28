@@ -8,6 +8,7 @@ export 'alerts/mg_toast.dart';
 export 'bottom_sheet/mg_bottom_sheet.dart';
 export 'buttons/mg_btn.dart';
 export 'input/mg_input.dart';
+export 'input/mg_dropdown.dart';
 
 // Design system
 export '../constants/app_numbers.dart';

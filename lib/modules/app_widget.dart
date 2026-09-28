@@ -17,7 +17,7 @@ class AppWidget extends ConsumerWidget {
     final themeMode = ref.watch(themeModeControllerProvider);
 
     return MaterialApp.router(
-      routerConfig: AppModule.router,
+      routerConfig: ref.watch(appRouterProvider),
       title: 'Milagua Corp',
       debugShowCheckedModeBanner: false,
       theme: AppTheme().getThemeData(context),
