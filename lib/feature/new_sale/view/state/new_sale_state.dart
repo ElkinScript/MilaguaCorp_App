@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../client/domain/client_model.dart';
 import '../../../product/domain/product_model.dart';
 import '../../domain/new_sale_model.dart';
 
@@ -11,16 +12,16 @@ class NewSaleState with _$NewSaleState {
   const factory NewSaleState.loading() = _Loading;
   const factory NewSaleState.ready({
     required List<ProductModel> products,
-    required List<BranchModel> branches,
     @Default([]) List<PaymentMethodModel> paymentMethods,
-    required List<CartItem> cart,
-    BranchModel? selectedBranch,
-    @Default('efectivo') String paymentMethod,
-    @Default('') String clientName,
-    @Default('') String clientPhone,
-    @Default('') String clientEmail,
+    ClientModel? client,
+    @Default([]) List<CartItem> cart,
+    @Default([]) List<StandaloneContainerItem> standaloneContainers,
+    @Default('') String paymentMethod,
     @Default('') String observation,
-    @Default(true) bool hasContainer,
+    // Generado una sola vez al primer intento de confirmar — se reutiliza
+    // en reintentos para que la idempotencia del backend sirva de algo
+    // (si no, cada reintento sería una venta "distinta" para el servidor).
+    String? operationId,
     @Default(false) bool submitting,
     @Default(false) bool success,
     String? submitError,

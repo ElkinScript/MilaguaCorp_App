@@ -27,7 +27,16 @@ class UserModel with _$UserModel {
 extension UserModelX on UserModel {
   String get displayName => fullName.isNotEmpty ? fullName : username;
   String get groupName => groups.isNotEmpty ? groups.first : '';
-  String get branchName => employeeProfile?.branchName ?? '';
+  EmployeeBranchModel? get branch => employeeProfile?.branch;
+
+  /// "Guayaquil - Sede 1 Casa" — para mostrar sin ambigüedad cuál sucursal
+  /// es (dos sucursales pueden compartir nombre en ciudades distintas).
+  String get branchDisplay {
+    final b = branch;
+    if (b == null) return '';
+    if (b.city.isEmpty) return b.name;
+    return '${b.city} - ${b.name}';
+  }
 
   String get initials {
     if (firstName.isNotEmpty && lastName.isNotEmpty) {
@@ -47,11 +56,28 @@ extension UserModelX on UserModel {
 class EmployeeProfileModel with _$EmployeeProfileModel {
   const factory EmployeeProfileModel({
     required int id,
-    @JsonKey(name: 'branch_name') @Default('') String branchName,
+    EmployeeBranchModel? branch,
+    @Default('') String position,
+    @Default('') String area,
     @Default('') String phone,
     @JsonKey(name: 'identification_number') @Default('') String identificationNumber,
   }) = _EmployeeProfileModel;
 
   factory EmployeeProfileModel.fromJson(Map<String, dynamic> json) =>
       _$EmployeeProfileModelFromJson(json);
+}
+
+// Sucursal del empleado — llega anidada dentro de employee_profile.branch,
+// nunca se elige a mano (la deriva siempre el backend del empleado
+// autenticado, ver POST /api/sale/create/).
+@freezed
+class EmployeeBranchModel with _$EmployeeBranchModel {
+  const factory EmployeeBranchModel({
+    required int id,
+    @Default('') String name,
+    @Default('') String city,
+  }) = _EmployeeBranchModel;
+
+  factory EmployeeBranchModel.fromJson(Map<String, dynamic> json) =>
+      _$EmployeeBranchModelFromJson(json);
 }

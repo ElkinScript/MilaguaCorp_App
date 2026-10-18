@@ -12,9 +12,11 @@ class ProductModel with _$ProductModel {
     @Default('') String description,
     @JsonKey(name: 'product_type') ProductTypeModel? productType,
     @JsonKey(name: 'active_price') String? activePrice,
-    @JsonKey(name: 'price_recarga') String? priceRecarga,
-    @JsonKey(name: 'price_nuevo') String? priceNuevo,
     @JsonKey(name: 'stock_quantity') @Default(0) int stockQuantity,
+    // Envase que este producto requiere si es retornable — null si no lo es.
+    // Ver core.product.api.v1.product.serializers.product.ProductSerializer.
+    @JsonKey(name: 'returnable_container')
+    ReturnableContainerModel? returnableContainer,
     @Default(true) bool state,
   }) = _ProductModel;
 
@@ -23,9 +25,8 @@ class ProductModel with _$ProductModel {
 }
 
 extension ProductModelX on ProductModel {
-  /// Precio según si el cliente tiene poma o no.
-  String priceFor(bool hasContainer) =>
-      hasContainer ? (priceRecarga ?? activePrice ?? '0.00') : (priceNuevo ?? activePrice ?? '0.00');
+  bool get isReturnable => productType?.isReturnable ?? false;
+  double get priceValue => double.tryParse(activePrice ?? '') ?? 0;
 }
 
 @freezed
@@ -38,4 +39,24 @@ class ProductTypeModel with _$ProductTypeModel {
 
   factory ProductTypeModel.fromJson(Map<String, dynamic> json) =>
       _$ProductTypeModelFromJson(json);
+}
+
+// Envase retornable requerido por un producto (ej. AGUA AZUL -> POMA AZUL).
+// Viene anidado en ProductModel.returnableContainer — mismo shape que usa
+// ContainerType.to_json_api() en el backend: {id, name, code, price}.
+@freezed
+class ReturnableContainerModel with _$ReturnableContainerModel {
+  const factory ReturnableContainerModel({
+    required int id,
+    @Default('') String name,
+    @Default('') String code,
+    String? price,
+  }) = _ReturnableContainerModel;
+
+  factory ReturnableContainerModel.fromJson(Map<String, dynamic> json) =>
+      _$ReturnableContainerModelFromJson(json);
+}
+
+extension ReturnableContainerModelX on ReturnableContainerModel {
+  double get priceValue => double.tryParse(price ?? '') ?? 0;
 }

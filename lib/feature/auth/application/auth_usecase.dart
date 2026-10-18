@@ -45,12 +45,22 @@ class AuthUseCase {
     await _storage.removeAll();
   }
 
+  /// Restaura la sesión guardada al abrir la app.
+  ///
+  /// Basta con que exista algún token: `GET /api/auth/me/` valida el access
+  /// y, si está vencido (o falta), el AuthRefreshInterceptor del cliente HTTP
+  /// lo refresca con el refresh token y reintenta solo. Si el refresh es
+  /// rechazado el interceptor ya limpió el storage.
   Future<Either<ServerException, UserModel>> checkAuth() async {
-    final token = await _storage.getItem(AppStrings.keyTokenAccess);
-    if (token == null) {
+    final access = await _storage.getItem(AppStrings.keyTokenAccess);
+    final refresh = await _storage.getItem(AppStrings.keyTokenRefresh);
+    if (access == null && refresh == null) {
       return Left(const ServerException('No se encontró una sesión activa.'));
     }
-    return _repo.getProfile();
+
+    final profileResult = await _repo.getProfile();
+    if (profileResult.isRight) await _saveProfile(profileResult.right);
+    return profileResult;
   }
 
   Future<Either<ServerException, UserModel>> updateProfile({

@@ -1,12 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../core/utils/error_parser.dart';
 import '../../../../core/utils/logger.dart';
+import '../../../client/domain/client_model.dart';
 import '../../../product/domain/product_model.dart';
 import '../../data/services/new_sale_service.dart';
 import '../../domain/new_sale_model.dart';
 import '../state/new_sale_state.dart';
+
+const _uuid = Uuid();
 
 final newSaleControllerProvider =
     StateNotifierProvider.autoDispose<NewSaleController, NewSaleState>(
@@ -27,50 +31,69 @@ class NewSaleController extends StateNotifier<NewSaleState> {
     state = const NewSaleState.loading();
     try {
       final products = await _service.getProducts();
-      final initData = await _service.getInitData();
+      final paymentMethods = await _service.getPaymentMethods();
       state = NewSaleState.ready(
         products:
             products.where((p) => p.state && p.stockQuantity > 0).toList(),
-        branches: initData.branches,
-        paymentMethods: initData.paymentMethods,
+        paymentMethods: paymentMethods,
         cart: const [],
-        selectedBranch:
-            initData.branches.isNotEmpty ? initData.branches.first : null,
-        paymentMethod: initData.paymentMethods.isNotEmpty
-            ? initData.paymentMethods.first.value
-            : 'efectivo',
+        standaloneContainers: const [],
+        paymentMethod:
+            paymentMethods.isNotEmpty ? paymentMethods.first.value : 'EFECTIVO',
       );
     } catch (e) {
       state = NewSaleState.error(parseError(e));
     }
   }
 
-  void addToCart(ProductModel product, int quantity) {
+  // ── Cliente ──────────────────────────────────────────────────────
+  void setClient(ClientModel client) {
     final s = _s;
     if (s == null) return;
-    // Precio según si el cliente tiene poma o no (se puede cambiar en el paso 2)
-    final hasContainer = s.hasContainer as bool;
-    final price = product.priceFor(hasContainer);
-    final existing =
-        (s.cart as List<CartItem>).indexWhere((c) => c.productId == product.id);
-    List<CartItem> newCart;
-    if (existing >= 0) {
-      newCart = [...s.cart as List<CartItem>];
-      newCart[existing] =
-          newCart[existing].copyWith(quantity: newCart[existing].quantity + quantity);
+    state = (s as dynamic).copyWith(client: client) as NewSaleState;
+  }
+
+  void clearClient() {
+    final s = _s;
+    if (s == null) return;
+    state = (s as dynamic).copyWith(client: null) as NewSaleState;
+  }
+
+  /// Saldo de pomas que el sistema le reconoce al cliente seleccionado para
+  /// un tipo de envase — 0 si no hay cliente o no tiene registradas.
+  int clientBalanceFor(int containerTypeId) {
+    final s = _s;
+    if (s == null) return 0;
+    final client = s.client as ClientModel?;
+    return client?.balanceFor(containerTypeId) ?? 0;
+  }
+
+  // ── Carrito de productos ─────────────────────────────────────────
+  void addToCart(
+    ProductModel product, {
+    required int quantity,
+    int returnedContainerQuantity = 0,
+  }) {
+    final s = _s;
+    if (s == null) return;
+    final cart = List<CartItem>.from(s.cart as List<CartItem>);
+    final existingIndex = cart.indexWhere((c) => c.productId == product.id);
+    final item = CartItem(
+      productId: product.id,
+      productName: product.name,
+      unitPrice: product.activePrice ?? '0.00',
+      quantity: quantity,
+      productType: product.productType?.name ?? '',
+      isReturnable: product.isReturnable,
+      returnableContainer: product.returnableContainer,
+      returnedContainerQuantity: returnedContainerQuantity,
+    );
+    if (existingIndex >= 0) {
+      cart[existingIndex] = item;
     } else {
-      newCart = [
-        ...s.cart as List<CartItem>,
-        CartItem(
-          productId: product.id,
-          productName: product.name,
-          unitPrice: price,
-          quantity: quantity,
-          productType: product.productType?.name ?? '',
-        ),
-      ];
+      cart.add(item);
     }
-    state = (s as dynamic).copyWith(cart: newCart) as NewSaleState;
+    state = (s as dynamic).copyWith(cart: cart) as NewSaleState;
   }
 
   void removeFromCart(int productId) {
@@ -82,44 +105,42 @@ class NewSaleController extends StateNotifier<NewSaleState> {
     state = (s as dynamic).copyWith(cart: newCart) as NewSaleState;
   }
 
-  void updateQuantity(int productId, int quantity) {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-      return;
+  // ── Envases sueltos ("poma sola") ────────────────────────────────
+  void addStandaloneContainer(ReturnableContainerModel container, int quantity) {
+    final s = _s;
+    if (s == null) return;
+    final list = List<StandaloneContainerItem>.from(
+        s.standaloneContainers as List<StandaloneContainerItem>);
+    final existingIndex =
+        list.indexWhere((c) => c.containerTypeId == container.id);
+    final item = StandaloneContainerItem(
+      containerTypeId: container.id,
+      containerTypeName: container.name,
+      unitPrice: container.price ?? '0.00',
+      quantity: quantity,
+    );
+    if (existingIndex >= 0) {
+      list[existingIndex] = item;
+    } else {
+      list.add(item);
     }
+    state = (s as dynamic).copyWith(standaloneContainers: list) as NewSaleState;
+  }
+
+  void removeStandaloneContainer(int containerTypeId) {
     final s = _s;
     if (s == null) return;
-    final newCart = (s.cart as List<CartItem>)
-        .map((c) => c.productId == productId ? c.copyWith(quantity: quantity) : c)
+    final list = (s.standaloneContainers as List<StandaloneContainerItem>)
+        .where((c) => c.containerTypeId != containerTypeId)
         .toList();
-    state = (s as dynamic).copyWith(cart: newCart) as NewSaleState;
+    state = (s as dynamic).copyWith(standaloneContainers: list) as NewSaleState;
   }
 
-  void selectBranch(BranchModel branch) {
-    final s = _s;
-    if (s == null) return;
-    state = (s as dynamic).copyWith(selectedBranch: branch) as NewSaleState;
-  }
-
+  // ── Datos de la venta ────────────────────────────────────────────
   void setPaymentMethod(String method) {
     final s = _s;
     if (s == null) return;
     state = (s as dynamic).copyWith(paymentMethod: method) as NewSaleState;
-  }
-
-  void setClientName(String v) {
-    final s = _s;
-    if (s != null) state = (s as dynamic).copyWith(clientName: v) as NewSaleState;
-  }
-
-  void setClientPhone(String v) {
-    final s = _s;
-    if (s != null) state = (s as dynamic).copyWith(clientPhone: v) as NewSaleState;
-  }
-
-  void setClientEmail(String v) {
-    final s = _s;
-    if (s != null) state = (s as dynamic).copyWith(clientEmail: v) as NewSaleState;
   }
 
   void setObservation(String v) {
@@ -127,72 +148,77 @@ class NewSaleController extends StateNotifier<NewSaleState> {
     if (s != null) state = (s as dynamic).copyWith(observation: v) as NewSaleState;
   }
 
-  void setHasContainer(bool v) {
-    final s = _s;
-    if (s == null) return;
-    // Recalcular precios del carrito con el nuevo tipo de poma
-    final products = s.products as List<ProductModel>;
-    final updatedCart = (s.cart as List<CartItem>).map((item) {
-      final product = products.firstWhere(
-        (p) => p.id == item.productId,
-        orElse: () => ProductModel(id: item.productId),
-      );
-      final newPrice = product.priceFor(v);
-      return item.copyWith(unitPrice: newPrice);
-    }).toList();
-    state = (s as dynamic).copyWith(hasContainer: v, cart: updatedCart) as NewSaleState;
-  }
-
-  double get total {
+  // ── Totales ──────────────────────────────────────────────────────
+  double get productsTotal {
     final s = _s;
     if (s == null) return 0;
-    return (s.cart as List<CartItem>).fold(0.0, (sum, c) => sum + c.subtotal);
+    return (s.cart as List<CartItem>)
+        .fold(0.0, (sum, c) => sum + c.productSubtotal);
   }
 
+  double get newContainersTotal {
+    final s = _s;
+    if (s == null) return 0;
+    final fromReturnable = (s.cart as List<CartItem>)
+        .fold(0.0, (sum, c) => sum + c.containerSubtotal);
+    final fromStandalone = (s.standaloneContainers as List<StandaloneContainerItem>)
+        .fold(0.0, (sum, c) => sum + c.subtotal);
+    return fromReturnable + fromStandalone;
+  }
+
+  double get total => productsTotal + newContainersTotal;
+
+  bool get isEmpty {
+    final s = _s;
+    if (s == null) return true;
+    return (s.cart as List<CartItem>).isEmpty &&
+        (s.standaloneContainers as List<StandaloneContainerItem>).isEmpty;
+  }
+
+  // ── Envío ────────────────────────────────────────────────────────
   Future<bool> submitSale() async {
     final s = _s;
     if (s == null) return false;
+    final client = s.client as ClientModel?;
     final cart = s.cart as List<CartItem>;
-    final branch = s.selectedBranch as BranchModel?;
-    final clientName = (s.clientName as String).trim();
+    final standalone = s.standaloneContainers as List<StandaloneContainerItem>;
 
-    // Validaciones previas — devuelven error legible en vez de fallar silencioso.
-    if (cart.isEmpty) {
-      state = (s as dynamic).copyWith(submitError: 'El carrito está vacío.') as NewSaleState;
-      return false;
-    }
-    if (branch == null) {
-      state = (s as dynamic).copyWith(submitError: 'Selecciona una sucursal.') as NewSaleState;
-      return false;
-    }
-    if (clientName.isEmpty) {
+    if (client == null) {
       state = (s as dynamic)
-          .copyWith(submitError: 'Ingresa el nombre del cliente.') as NewSaleState;
+          .copyWith(submitError: 'Selecciona un cliente antes de confirmar.') as NewSaleState;
+      return false;
+    }
+    if (cart.isEmpty && standalone.isEmpty) {
+      state = (s as dynamic)
+          .copyWith(submitError: 'Agrega al menos un producto o envase.') as NewSaleState;
       return false;
     }
 
-    state = (s as dynamic).copyWith(submitting: true, submitError: null) as NewSaleState;
+    // El operation_id se genera UNA sola vez por venta — si el envío falla
+    // y el empleado reintenta, se reusa el mismo para que el backend lo
+    // reconozca como el mismo intento (evita duplicar la venta).
+    final operationId = (s.operationId as String?) ?? _uuid.v4();
+
+    state = (s as dynamic).copyWith(
+      submitting: true,
+      submitError: null,
+      operationId: operationId,
+    ) as NewSaleState;
+
     try {
       final request = NewSaleRequest(
-        branchId: branch.id,
+        operationId: operationId,
+        clientId: client.id,
         paymentMethod: s.paymentMethod as String,
         observation: s.observation as String,
-        client: NewSaleClient(
-          name: clientName,
-          phone: s.clientPhone as String,
-          email: s.clientEmail as String,
-          hasContainer: s.hasContainer as bool,
-        ),
-        items: cart
-            .map((c) => NewSaleItem(productId: c.productId, quantity: c.quantity))
-            .toList(),
+        items: cart,
+        standaloneContainers: standalone,
       );
       await _service.createSale(request);
       state = (s as dynamic).copyWith(
         submitting: false,
         success: true,
         submitError: null,
-        cart: <CartItem>[],
       ) as NewSaleState;
       return true;
     } on DioException catch (e) {

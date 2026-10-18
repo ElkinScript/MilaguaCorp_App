@@ -2,16 +2,29 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../modules/common/drivers/http/session_events.dart';
 import '../../application/auth_usecase.dart';
 import '../state/auth_state.dart';
 
+// Sin autoDispose: la sesión es global y el router (redirect) la escucha
+// durante toda la vida de la app.
 final authControllerProvider =
-    StateNotifierProvider.autoDispose<AuthController, AuthState>(
-  (ref) => AuthController(ref.watch(authUseCaseProvider)),
-);
+    StateNotifierProvider<AuthController, AuthState>((ref) {
+  final controller = AuthController(ref.watch(authUseCaseProvider));
+  // Refresh rechazado en la capa HTTP → la sesión ya se limpió del storage,
+  // sólo falta reflejarlo en el estado (el router manda a /login).
+  final sub = ref
+      .watch(sessionEventsProvider)
+      .onExpired
+      .listen((_) => controller.sessionExpired());
+  ref.onDispose(sub.cancel);
+  // Auto-login: al arrancar se intenta restaurar la sesión guardada.
+  controller.checkAuth();
+  return controller;
+});
 
 class AuthController extends StateNotifier<AuthState> {
-  AuthController(this._useCase) : super(const AuthState.initial());
+  AuthController(this._useCase) : super(const AuthState.checking());
 
   final AuthUseCase _useCase;
 
@@ -29,12 +42,25 @@ class AuthController extends StateNotifier<AuthState> {
     state = const AuthState.initial();
   }
 
+  /// Restaura la sesión guardada — mientras tanto el estado es `checking`
+  /// (splash). Sin sesión válida queda en `initial` (login).
   Future<void> checkAuth() async {
-    state = const AuthState.loading();
+    state = const AuthState.checking();
     final result = await _useCase.checkAuth();
+    if (!mounted) return;
     result.fold(
       (error) => state = const AuthState.initial(),
       (user) => state = AuthState.authenticated(user),
+    );
+  }
+
+  /// La capa HTTP avisó que el refresh token fue rechazado (el storage ya
+  /// quedó limpio). Durante el arranque no se toca: checkAuth resuelve solo.
+  void sessionExpired() {
+    if (!mounted) return;
+    state.maybeWhen(
+      checking: () {},
+      orElse: () => state = const AuthState.initial(),
     );
   }
 
